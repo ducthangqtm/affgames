@@ -6,6 +6,26 @@
   ],
   "products": [
     {
+      "id": "prod-1789049593265",
+      "name": "Cân sức khỏe điện tử iScale SE",
+      "category": "Dụng Cụ",
+      "shopeeUrl": "https://s.shopee.vn/AAGf983zVA",
+      "tiktokUrl": "",
+      "affiliate_url": "https://s.shopee.vn/AAGf983zVA",
+      "image_url": "https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mmhm4l34fsw255.webp",
+      "price": "Giá tốt"
+    },
+    {
+      "id": "prod-1789049578235",
+      "name": "Bình nước nhựa Tritan",
+      "category": "Dụng Cụ",
+      "shopeeUrl": "https://s.shopee.vn/7VFty9U36n",
+      "tiktokUrl": "",
+      "affiliate_url": "https://s.shopee.vn/7VFty9U36n",
+      "image_url": "https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mnmmnbhvtse8a0.webp",
+      "price": "Giá tốt"
+    },
+    {
       "id": "prod-1789049460678",
       "name": "Dây Nhảy Cho Bé Điều Chỉnh Độ Dài",
       "category": "Đồ Nhảy Dây",
