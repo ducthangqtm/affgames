@@ -1,9 +1,23 @@
 import { soundEngine } from './games/SoundEngine.js';
 import { GameController } from './games/GameController.js';
-import { GameCarousel } from './modules/carousel.js';
+import { GameGridManager } from './modules/gameGrid.js';
 import { LeaderboardManager } from './modules/leaderboard.js';
 import { AffiliateManager } from './modules/affiliate.js';
 import { DonateModalManager } from './modules/donateModal.js';
+
+// Chặn triệt để phóng to màn hình (Gesture Zoom & Double-tap Zoom) trên iOS/Safari
+document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
+
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    e.preventDefault();
+  }
+  lastTouchEnd = now;
+}, { passive: false });
 
 document.addEventListener('DOMContentLoaded', () => {
   // Game Titles mapping
@@ -44,12 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (tabContentArcade) tabContentArcade.classList.remove('hidden');
       if (tabContentProducts) tabContentProducts.classList.add('hidden');
 
-      // 1. Thiết lập game mặc định khi mở tab: Thắng Nhảy Dây (jump) luôn ở vị trí trung tâm
-      setTimeout(() => {
-        if (carousel && carousel.resetToDefault) {
-          carousel.resetToDefault();
-        }
-      }, 40);
+      // 1. Thiết lập game mặc định khi mở tab: Thắng Nhảy Dây (jump)
+      if (gameGrid && gameGrid.resetToDefault) {
+        gameGrid.resetToDefault();
+      }
     }
   };
 
@@ -63,28 +75,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Quản lý Bảng Vàng Top 10
   const leaderboardManager = new LeaderboardManager();
 
-  // 2. Khởi tạo Carousel & IntersectionObserver
-  const carouselEl = document.getElementById('gameCarousel');
+  // 2. Khởi tạo Lưới Tĩnh 4 Game (Grid 2x2)
+  const gameGridEl = document.getElementById('gameGrid');
   const activeTitleEl = document.getElementById('activeGameTitle');
 
-  const carousel = new GameCarousel(carouselEl, (activeGameId) => {
-    if (activeTitleEl) {
-      activeTitleEl.innerText = `BẢNG VÀNG TOP 10: ${gameTitles[activeGameId] || activeGameId.toUpperCase()}`;
+  const gameGrid = new GameGridManager(gameGridEl, {
+    onActiveGameChange: (activeGameId) => {
+      if (activeTitleEl) {
+        activeTitleEl.innerText = `BẢNG VÀNG TOP 10: ${gameTitles[activeGameId] || activeGameId.toUpperCase()}`;
+      }
+      // Tự động tải Bảng Vàng của game được chọn ngay lập tức từ cache
+      leaderboardManager.fetchTop10(activeGameId);
+    },
+    onLaunchGame: (gameId) => {
+      openGame(gameId);
     }
-    // Tự động tải Bảng Vàng của game đang nằm giữa màn hình
-    leaderboardManager.fetchTop10(activeGameId);
   });
 
   // Tải Bảng Vàng ban đầu (game jump)
   leaderboardManager.fetchTop10('jump');
-
-  // Dot click navigation
-  document.querySelectorAll('.carousel-dot').forEach((dot) => {
-    dot.addEventListener('click', (e) => {
-      const gid = e.currentTarget.dataset.gameId;
-      if (gid) carousel.scrollToGame(gid);
-    });
-  });
 
   // 3. Quản lý Arcade Viewport Modal & GameController (1 canvas duy nhất)
   const arcadeModal = document.getElementById('arcadeModal');
@@ -183,7 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = e.target.closest('.launch-game-btn');
     if (btn) {
       const gid = btn.dataset.gameId;
-      if (gid) openGame(gid);
+      if (gid) {
+        if (gameGrid) gameGrid.setActiveGame(gid);
+        openGame(gid);
+      }
     }
   });
 
@@ -231,6 +243,72 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       donateModalEl.classList.remove('hidden');
       donateModalEl.classList.add('flex');
+    });
+  }
+
+  // 6. Xử lý Cụm tiện ích: Nút Chia sẻ (Share Button)
+  const shareBtn = document.getElementById('shareBtn');
+  if (shareBtn) {
+    const shareUrl = 'https://thangnhayday.com';
+    const shareTitle = 'Thắng Nhảy Dây - Bio Link & Arcade';
+
+    const showShareToast = (message) => {
+      const existing = document.getElementById('appShareToast');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'appShareToast';
+      toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] px-4 py-2.5 rounded-xl border border-emerald-500/80 bg-slate-950/95 text-emerald-300 shadow-2xl text-xs font-medium backdrop-blur-md flex items-center gap-2 transition-all duration-300 pointer-events-none';
+      toast.innerHTML = `
+        <span class="text-emerald-400">🔗</span>
+        <span>${message}</span>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, 10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    };
+
+    const copyToClipboard = () => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl)
+          .then(() => showShareToast('Đã sao chép liên kết thangnhayday.com!'))
+          .catch(() => fallbackCopy());
+      } else {
+        fallbackCopy();
+      }
+    };
+
+    const fallbackCopy = () => {
+      const temp = document.createElement('input');
+      temp.value = shareUrl;
+      document.body.appendChild(temp);
+      temp.select();
+      try {
+        document.execCommand('copy');
+        showShareToast('Đã sao chép liên kết thangnhayday.com!');
+      } catch (_) {}
+      temp.remove();
+    };
+
+    shareBtn.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: shareTitle,
+            url: shareUrl
+          });
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            copyToClipboard();
+          }
+        }
+      } else {
+        copyToClipboard();
+      }
     });
   }
 });

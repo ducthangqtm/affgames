@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@500;700&display=swap');
 
 :root {
   --bg-main: #060913;
@@ -14,8 +14,26 @@
   box-sizing: border-box;
 }
 
+html,
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+canvas,
+button,
+.btn,
+.game-container {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--bg-main);
   background-image: 
     radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
@@ -24,11 +42,13 @@ body {
   background-attachment: fixed;
   color: #e2e8f0;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
 
 .font-display {
-  font-family: 'Chakra Petch', sans-serif;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .font-mono {
@@ -53,36 +73,68 @@ body {
   box-shadow: 0 0 25px rgba(255, 214, 10, 0.25);
 }
 
+/* Header Avatar */
+.avatar-container {
+  position: relative !important;
+  width: 110px !important;
+  height: 110px !important;
+  min-width: 110px !important;
+  min-height: 110px !important;
+  margin: 0 auto 12px auto !important;
+}
+
+.profile-avatar {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  border: 3px solid rgba(56, 189, 248, 0.85) !important;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+.profile-avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  object-position: center 20% !important;
+  transform: scale(1.15) !important;
+  display: block !important;
+}
+
+.avatar-badge {
+  position: absolute !important;
+  right: 3px !important;
+  bottom: 3px !important;
+  width: 24px !important;
+  height: 24px !important;
+  background: #06b6d4 !important;
+  color: #020617 !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+  border: 2px solid #0f172a !important;
+  z-index: 10 !important;
+}
+
+.avatar-badge svg {
+  width: 14px !important;
+  height: 14px !important;
+  fill: currentColor !important;
+}
+
 .avatar-glow {
-  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.4), 0 0 20px rgba(0, 240, 255, 0.3);
-}
-
-/* CSS Scroll Snap Carousel */
-.carousel-container {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  border: 3px solid rgba(56, 189, 248, 0.85) !important;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4) !important;
 }
 
 
-.carousel-container::-webkit-scrollbar {
-  display: none;
-}
-
-.game-card {
-  scroll-snap-align: center;
-  flex: 0 0 82%;
-  max-width: 320px;
-  transition: transform 0.25s ease, border-color 0.25s ease;
-}
-
-@media (min-width: 640px) {
-  .game-card {
-    flex: 0 0 290px;
-  }
-}
 
 /* Custom Buttons */
 .btn-neon {
@@ -156,38 +208,58 @@ body {
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.35) !important;
 }
 
-/* Carousel Drag Cursor */
-.carousel-container {
-  cursor: grab;
+/* Game Grid 2x2 & Active Neon Highlight */
+.game-grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.carousel-container.cursor-grabbing {
-  cursor: grabbing;
+.game-grid-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #151a23;
+  border-radius: 16px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
+}
+
+.game-grid-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 242, 254, 0.4);
+}
+
+.game-grid-card.active-game-card {
+  border: 2px solid #00f2fe !important;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.35) !important;
+}
+
+.game-grid-card.active-game-card:hover {
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.5) !important;
 }
 
 /* D-Pad Buttons */
 .dpad-btn {
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;
+  touch-action: manipulation !important;
+  -webkit-touch-callout: none;
   transition: background-color 0.1s, transform 0.1s;
 }
 
-.dpad-btn:active {
+.dpad-btn:active, .game-control-btn:active {
   transform: scale(0.94);
 }
 
-/* Arcade Cabinet Frame (2-layer Bezel & Cyberpunk Neon) */
+/* Modern Flat Game Viewport Frame (#0d1117 & border-radius 16px) */
 .arcade-cabinet-frame {
-  width: min(92vw, 420px);
+  width: fit-content;
+  max-width: min(94vw, 420px);
   position: relative;
-  border: 3px solid #00f2fe;
-  border-radius: 20px;
-  outline: 6px solid rgba(255, 255, 255, 0.05);
-  outline-offset: 0px;
-  box-shadow: 0 0 25px rgba(0, 242, 254, 0.35), inset 0 0 15px rgba(0, 242, 254, 0.2);
-  background: #050813;
+  background: #0d1117;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -197,17 +269,10 @@ body {
   margin: 0 auto;
 }
 
-/* Corner Arcade Metallic Bolts */
-.arcade-bolt {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #00f0ff;
-  border: 1.5px solid #ffffff;
-  box-shadow: 0 0 8px #00f0ff;
-  pointer-events: none;
-  z-index: 10;
+/* Xếp hình Tetris: Bỏ bo góc dưới bên trái để góc vuông phẳng sắc nét không bị lẹm gạch */
+.arcade-cabinet-frame.tetris-frame,
+.arcade-cabinet-frame.tetris-frame canvas {
+  border-bottom-left-radius: 0 !important;
 }
 
 /* Leaderboard Pill Tabs */
@@ -234,3 +299,501 @@ body {
 .animate-pulse-glow {
   animation: pulseGlow 2s infinite ease-in-out;
 }
+
+/* Category Filter Tabs (Modern Segmented / Pill Tabs) */
+.category-tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  padding-top: 2px;
+  padding-bottom: 4px;
+}
+
+.category-tabs-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.category-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.category-tab:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.category-tab.active {
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.2) 0%, rgba(0, 153, 255, 0.16) 100%) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  border: 1px solid rgba(0, 242, 254, 0.75) !important;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.3) !important;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   TOP UTILITY BAR (Status & Share Button)
+   ========================================================================== */
+.top-utility-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 0 4px;
+}
+
+.status-pill {
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  display: inline-block;
+  animation: statusBreathe 2s infinite ease-in-out;
+}
+
+@keyframes statusBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 8px #10b981;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.75;
+    box-shadow: 0 0 14px #10b981;
+  }
+}
+
+.status-text {
+  color: #34d399;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.share-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  outline: none;
+}
+
+.share-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.share-btn:active {
+  transform: scale(0.94);
+}
+
+/* ==========================================================================
+   PRODUCT CARDS (Phẳng & Tràn Viền)
+   ========================================================================== */
+.product-card {
+  background: #151a23;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 !important;
+  margin: 0;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.product-image {
+  width: 100% !important;
+  display: block !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  border-radius: 16px 16px 0 0 !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  vertical-align: top;
+}
+
+.product-body {
+  padding: 10px 12px 12px !important;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.product-title {
+  color: #ffffff;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 18px;
+  height: 36px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   NÚT BẤM MUA HÀNG
+   ========================================================================== */
+.btn-shopee-single {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: #ee4d2d !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-radius: 10px;
+  padding: 8px 0;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+.btn-shopee-single:hover {
+  background: #d73211 !important;
+  transform: scale(1.01);
+}
+
+.btn-shopee-single:active {
+  transform: scale(0.98);
+}
+
+.btn-tiktok-single {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: #0f141c;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  border-radius: 10px;
+  padding: 8px 0;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+.btn-tiktok-single:hover {
+  background: #1a222f;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.01);
+}
+
+.btn-tiktok-single:active {
+  transform: scale(0.98);
+}
+
+.btn-dual-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-dual-shopee {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: #ee4d2d !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  border-radius: 10px;
+  padding: 8px 0;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+  user-select: none;
+  letter-spacing: 0.01em;
+}
+
+.btn-dual-shopee:hover {
+  background: #d73211 !important;
+  transform: scale(1.01);
+}
+
+.btn-dual-shopee:active {
+  transform: scale(0.98);
+}
+
+.btn-dual-tiktok {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: #0f141c;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  border-radius: 10px;
+  padding: 8px 0;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  user-select: none;
+  letter-spacing: 0.01em;
+}
+
+.btn-dual-tiktok:hover {
+  background: #1a222f;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.01);
+}
+
+.btn-dual-tiktok:active {
+  transform: scale(0.98);
+}
+
+/* Map Selector & Jump Start Overlay */
+#jumpStartOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 8, 20, 0.25);
+  z-index: 25;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#jumpStartCard {
+  width: 78% !important;
+  max-width: 280px !important;
+  background: rgba(10, 15, 29, 0.25) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 18px;
+  padding: 18px 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Nút HÀNH LANG dạng Pill Button duy nhất nằm chính giữa */
+.map-selector-btn,
+.bg-selector-btn {
+  width: 82% !important;
+  max-width: 220px !important;
+  margin: 10px auto;
+  padding: 9px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: all 0.15s ease;
+  outline: none;
+  z-index: 100 !important;
+  position: relative;
+}
+
+.map-selector-btn *,
+.bg-selector-btn * {
+  pointer-events: none !important;
+}
+
+.map-selector-btn:hover,
+.bg-selector-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+.map-selector-btn:active,
+.bg-selector-btn:active {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.map-thumb-img {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  pointer-events: none !important;
+}
+
+.map-text-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  pointer-events: none !important;
+}
+
+.map-label {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #cbd5e1 !important;
+  line-height: 1.2;
+  pointer-events: none !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+}
+
+.map-number {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: #38bdf8 !important;
+  line-height: 1.2;
+  pointer-events: none !important;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+}
+
+/* Footer Links & Author Branding */
+.footer-link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer-link:hover {
+  color: #00f2fe !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(0, 242, 254, 0.5) !important;
+  text-underline-offset: 3px;
+}
+
+.author-link {
+  color: #f59e0b !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.author-link:hover {
+  color: #fbbf24 !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(251, 191, 36, 0.6) !important;
+  text-underline-offset: 3px;
+}
+
+/* Donate Modal - Primary Full-Width Save QR Button */
+.btn-save-qr {
+  width: 100% !important;
+  padding: 12px 0 !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  background: linear-gradient(135deg, #a50064 0%, #d91b7a 50%, #b80070 100%) !important;
+  box-shadow: 0 4px 18px rgba(184, 0, 112, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  outline: none !important;
+}
+
+.btn-save-qr:hover {
+  background: linear-gradient(135deg, #b80070 0%, #eb2f96 50%, #c40078 100%) !important;
+  box-shadow: 0 6px 22px rgba(235, 47, 150, 0.5) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-save-qr:active {
+  transform: scale(0.98) !important;
+}
+
+.donate-guide-text {
+  font-size: 12px !important;
+  color: #94a3b8 !important;
+  text-align: center !important;
+  line-height: 1.5 !important;
+}
+
+

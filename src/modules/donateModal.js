@@ -34,38 +34,41 @@ export class DonateModalManager {
         }
       });
 
-      // Nút copy số tài khoản
-      const copyBtn = this.modal.querySelector('#copyBankBtn');
-      if (copyBtn) {
-        copyBtn.addEventListener('click', () => {
-          const accNo = copyBtn.dataset.accountNo || '0987654321';
-          navigator.clipboard.writeText(accNo).then(() => {
-            const originalText = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<span>✅</span><span>Đã chép!</span>';
-            this.showToast('Đã chép số tài khoản!');
-            setTimeout(() => {
-              copyBtn.innerHTML = originalText;
-            }, 2000);
-          }).catch(() => {
-            this.showToast('Đã chép số tài khoản: ' + accNo);
-          });
+      // Nút duy nhất: "📥 Lưu Mã QR Vào Máy"
+      const saveQrBtn = this.modal.querySelector('#saveQrBtn');
+      if (saveQrBtn) {
+        saveQrBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          try {
+            const qrImg = this.modal.querySelector('#qrDonateImg');
+            const imgSrc = (qrImg && qrImg.src) ? qrImg.src : '/assets/qr-donate.jpg';
+            const link = document.createElement('a');
+            link.href = imgSrc;
+            link.download = 'QR-ThangNhayDay.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          } catch (err) {
+            console.error('Lỗi tải mã QR:', err);
+          }
+          this.showToast('Đã lưu mã QR! Bạn có thể quét qua MoMo hoặc App Ngân Hàng ❤️', 'success');
         });
       }
     }
   }
 
-  showToast(message) {
+  showToast(message, type = 'info') {
     const existing = document.getElementById('donateToast');
     if (existing) existing.remove();
 
     const toast = document.createElement('div');
     toast.id = 'donateToast';
-    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-4 py-2.5 rounded-xl border border-emerald-500/80 bg-emerald-950/95 text-emerald-300 shadow-2xl text-xs font-bold backdrop-blur flex items-center gap-2 animate-bounce';
-    toast.innerHTML = `<span>📋</span><span>${message}</span>`;
+    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-4 py-2.5 rounded-xl border border-emerald-500/80 bg-slate-900/95 text-emerald-300 shadow-2xl text-xs font-bold backdrop-blur flex items-center gap-2 animate-bounce';
+    toast.innerHTML = `<span>${message}</span>`;
     document.body.appendChild(toast);
     setTimeout(() => {
       if (toast.parentNode) toast.remove();
-    }, 2500);
+    }, 3000);
   }
 
   open() {

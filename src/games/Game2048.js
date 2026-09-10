@@ -9,21 +9,21 @@ export class Game2048 extends BaseGame {
     this.highScore = parseInt(localStorage.getItem('2048_high_score') || '0', 10);
     this.over = false;
 
-    // Neon palette for 2048 tiles
+    // Neon palette for 2048 tiles (Sống động, rực rỡ, độ tương phán cao)
     this.tileStyles = {
-      0: { bg: 'rgba(30, 41, 59, 0.4)', text: '#ffffff', glow: 'transparent' },
-      2: { bg: '#1e293b', text: '#38bdf8', glow: 'rgba(56, 189, 248, 0.3)' },
-      4: { bg: '#0f3a5d', text: '#38bdf8', glow: 'rgba(56, 189, 248, 0.4)' },
-      8: { bg: '#134e4a', text: '#2dd4bf', glow: 'rgba(45, 212, 191, 0.4)' },
-      16: { bg: '#065f46', text: '#34d399', glow: 'rgba(52, 211, 153, 0.5)' },
-      32: { bg: '#854d0e', text: '#facc15', glow: 'rgba(250, 204, 21, 0.5)' },
-      64: { bg: '#9a3412', text: '#fb923c', glow: 'rgba(251, 146, 60, 0.6)' },
-      128: { bg: '#9f1239', text: '#fb7185', glow: 'rgba(251, 113, 133, 0.6)' },
-      256: { bg: '#831843', text: '#f43f5e', glow: 'rgba(244, 63, 94, 0.7)' },
-      512: { bg: '#581c87', text: '#c084fc', glow: 'rgba(192, 132, 252, 0.7)' },
-      1024: { bg: '#3b0764', text: '#e879f9', glow: 'rgba(232, 121, 249, 0.8)' },
-      2048: { bg: '#701a75', text: '#f0abfc', glow: 'rgba(240, 171, 252, 0.9)' },
-      4096: { bg: '#4c0519', text: '#fda4af', glow: 'rgba(253, 164, 175, 1.0)' }
+      0: { bg: 'rgba(255, 255, 255, 0.04)', text: '#ffffff', glow: 'transparent' },
+      2: { bg: '#0284c7', text: '#ffffff', glow: 'rgba(2, 132, 199, 0.5)' },          // Nền xanh lơ sáng (#0284c7), chữ trắng
+      4: { bg: '#059669', text: '#ffffff', glow: 'rgba(5, 150, 105, 0.5)' },          // Nền xanh ngọc đậm (#059669), chữ trắng
+      8: { bg: '#ea580c', text: '#ffffff', glow: 'rgba(234, 88, 12, 0.6)' },          // Nền cam rực (#ea580c), chữ trắng
+      16: { bg: '#dc2626', text: '#ffffff', glow: 'rgba(220, 38, 38, 0.65)' },       // Nền cam đỏ chói (#dc2626), chữ trắng
+      32: { bg: '#fbc02d', text: '#0f172a', glow: 'rgba(251, 192, 45, 0.7)' },       // Nền vàng chanh rực rỡ (#fbc02d), chữ đen đậm
+      64: { bg: '#db2777', text: '#ffffff', glow: 'rgba(219, 39, 119, 0.7)' },       // Nền hồng cánh sen (#db2777), chữ trắng
+      128: { bg: '#9333ea', text: '#ffffff', glow: 'rgba(147, 51, 234, 0.75)' },     // Nền tím neon (#9333ea), chữ trắng, hiệu ứng glow nhẹ
+      256: { bg: '#6366f1', text: '#ffffff', glow: 'rgba(99, 102, 241, 0.8)' },      // Nền tím xanh đậm (#6366f1), chữ trắng
+      512: { bg: '#2563eb', text: '#ffffff', glow: 'rgba(37, 99, 235, 0.85)' },      // Nền xanh dương đậm (#2563eb), chữ trắng
+      1024: { bg: '#ffd700', text: '#000000', glow: '#ffd700' },                     // Nền vàng kim cương gold (#ffd700), chữ đen đậm, bóng viền vàng
+      2048: { bg: 'rainbow', text: '#ffffff', glow: 'rgba(255, 0, 128, 0.95)' },     // Gradient cầu vồng neon rực lửa, chữ trắng kèm hào quang
+      4096: { bg: '#f43f5e', text: '#ffffff', glow: 'rgba(244, 63, 94, 1.0)' }
     };
 
     this.loop = this.loop.bind(this);
@@ -103,11 +103,13 @@ export class Game2048 extends BaseGame {
 
   setupCanvas() {
     if (!this.canvas) return;
-    const parent = this.canvas.parentElement;
-    const parentW = parent ? parent.clientWidth : Math.min(window.innerWidth * 0.92, 420);
-    // Giãn to lấp đầy khung viền Arcade Cabinet (85-92% viewport)
-    const maxAvailable = Math.min(parentW || 380, window.innerHeight * 0.62, 420);
-    const size = Math.floor(Math.max(maxAvailable, 340));
+    const viewport = document.getElementById('canvasViewport');
+    const viewportW = viewport ? viewport.clientWidth : window.innerWidth;
+    // Mở rộng bề ngang tương đương game Xếp Hình (90-94% viewport mobile, max 400px)
+    const targetW = Math.floor(Math.min(viewportW > 0 ? viewportW * 0.94 : 380, 400));
+    const viewportH = viewport ? viewport.clientHeight : 500;
+    const maxH = Math.floor(Math.min(viewportH > 150 ? viewportH : (window.innerHeight - 150), 460));
+    const size = Math.floor(Math.min(targetW, maxH));
 
     const dpr = window.devicePixelRatio || 1;
     this.canvas.width = size * dpr;
@@ -263,17 +265,52 @@ export class Game2048 extends BaseGame {
         const style = this.tileStyles[val] || this.tileStyles[4096];
 
         this.ctx.save();
-        if (val > 0) {
-          this.ctx.shadowColor = style.glow;
-          this.ctx.shadowBlur = 10;
+        if (val === 2048) {
+          // Ô 2048: Gradient cầu vồng neon rực lửa kèm hào quang phát sáng
+          const grad = this.ctx.createLinearGradient(x, y, x + cellSize, y + cellSize);
+          grad.addColorStop(0, '#ff007f');
+          grad.addColorStop(0.5, '#ff5500');
+          grad.addColorStop(1, '#ffd700');
+          this.ctx.fillStyle = grad;
+          this.ctx.shadowColor = 'rgba(255, 85, 0, 0.95)';
+          this.ctx.shadowBlur = 20;
+        } else {
+          this.ctx.fillStyle = style.bg;
+          if (val > 0) {
+            this.ctx.shadowColor = style.glow;
+            this.ctx.shadowBlur = val >= 1024 ? 16 : 10;
+          }
         }
-        this.ctx.fillStyle = style.bg;
+
         if (this.ctx.roundRect) {
           this.ctx.beginPath();
           this.ctx.roundRect(x, y, cellSize, cellSize, 12);
           this.ctx.fill();
         } else {
           this.ctx.fillRect(x, y, cellSize, cellSize);
+        }
+
+        // Viền hiệu ứng bóng vàng cho ô 1024 và viền sáng cho 2048
+        if (val === 1024) {
+          this.ctx.lineWidth = 2.5;
+          this.ctx.strokeStyle = '#ffe55c';
+          if (this.ctx.roundRect) {
+            this.ctx.beginPath();
+            this.ctx.roundRect(x, y, cellSize, cellSize, 12);
+            this.ctx.stroke();
+          } else {
+            this.ctx.strokeRect(x, y, cellSize, cellSize);
+          }
+        } else if (val === 2048) {
+          this.ctx.lineWidth = 2.5;
+          this.ctx.strokeStyle = '#ffffff';
+          if (this.ctx.roundRect) {
+            this.ctx.beginPath();
+            this.ctx.roundRect(x, y, cellSize, cellSize, 12);
+            this.ctx.stroke();
+          } else {
+            this.ctx.strokeRect(x, y, cellSize, cellSize);
+          }
         }
         this.ctx.restore();
 
@@ -282,11 +319,11 @@ export class Game2048 extends BaseGame {
           this.ctx.fillStyle = style.text;
           this.ctx.textAlign = 'center';
           this.ctx.textBaseline = 'middle';
-          let fontSize = Math.floor(cellSize * 0.44);
-          if (val >= 100) fontSize = Math.floor(cellSize * 0.38);
-          if (val >= 1000) fontSize = Math.floor(cellSize * 0.30);
-          if (val >= 10000) fontSize = Math.floor(cellSize * 0.24);
-          this.ctx.font = `800 ${fontSize}px 'JetBrains Mono', 'Chakra Petch', sans-serif`;
+          let fontSize = Math.floor(cellSize * 0.48);
+          if (val >= 100) fontSize = Math.floor(cellSize * 0.42);
+          if (val >= 1000) fontSize = Math.floor(cellSize * 0.34);
+          if (val >= 10000) fontSize = Math.floor(cellSize * 0.28);
+          this.ctx.font = `800 ${fontSize}px Roboto, "JetBrains Mono", sans-serif`;
           this.ctx.fillText(val, x + cellSize / 2, y + cellSize / 2);
           this.ctx.restore();
         }

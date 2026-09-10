@@ -3,6 +3,9 @@
  * Hỗ trợ Fallback tự động đọc/ghi vào localStorage khi chạy Dev / Test
  */
 
+// Bộ đệm Cache Bảng Vàng Client In-Memory (Top 10 của 4 game)
+export const leaderboardCache = {};
+
 export class LeaderboardManager {
   constructor() {
     this.cache = new Map(); // `${gameId}_${type}` -> { data, timestamp }
@@ -267,13 +270,16 @@ export class LeaderboardManager {
     }
 
     const cacheKey = `${gameId}_${effectiveType}`;
-    const cached = this.cache.get(cacheKey);
-    const now = Date.now();
+    const cachedData = leaderboardCache[cacheKey];
 
-    if (!forceRefresh && cached && (now - cached.timestamp < this.cacheTTL)) {
-      this.renderLeaderboard(cached.data);
-      return cached.data;
+    // Client In-Memory Cache: Trả về tức thì không gọi API khi lướt qua lại, không giật lag
+    if (!forceRefresh && cachedData) {
+      this.qualifyingScores.set(cacheKey, cachedData.min_qualifying_score || 1);
+      this.renderLeaderboard(cachedData);
+      return cachedData;
     }
+
+    const now = Date.now();
 
     try {
       this.renderLoading();
@@ -282,6 +288,7 @@ export class LeaderboardManager {
 
       const data = await res.json();
       if (data.success && data.top10) {
+        leaderboardCache[cacheKey] = data;
         this.cache.set(cacheKey, { data, timestamp: now });
         this.qualifyingScores.set(cacheKey, data.min_qualifying_score || 1);
         this.renderLeaderboard(data);
@@ -291,6 +298,7 @@ export class LeaderboardManager {
     } catch (err) {
       // Fallback dev mode: đọc mock theo gameId và effectiveType
       const mockData = this.getMockLeaderboard(gameId, effectiveType);
+      leaderboardCache[cacheKey] = mockData;
       this.cache.set(cacheKey, { data: mockData, timestamp: now });
       this.qualifyingScores.set(cacheKey, mockData.min_qualifying_score || 1);
       this.renderLeaderboard(mockData);
@@ -341,22 +349,19 @@ export class LeaderboardManager {
 
     listEl.innerHTML = top10.map((item, idx) => {
       const rankBadge = idx < 3
-        ? `<span class="text-lg">${rankIcons[idx]}</span>`
-        : `<span class="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold font-mono">${idx + 1}</span>`;
+        ? `<span class="text-lg leading-none shrink-0">${rankIcons[idx]}</span>`
+        : `<span class="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold font-mono shrink-0">${idx + 1}</span>`;
 
       const isTop3 = idx < 3;
       const highlightClass = isTop3 ? 'border-amber-500/30 bg-amber-500/5' : 'border-slate-800/80 bg-slate-900/40';
 
       return `
-        <div class="flex items-center justify-between p-2.5 rounded-xl border ${highlightClass} transition hover:bg-slate-800/50">
+        <div class="flex items-center justify-between py-2 px-3 rounded-xl border ${highlightClass} transition hover:bg-slate-800/50">
           <div class="flex items-center gap-2.5 min-w-0">
             ${rankBadge}
-            <div class="flex flex-col min-w-0">
-              <span class="text-xs font-bold text-slate-200 truncate">${this.escapeHTML(item.display_name)}</span>
-              <span class="text-[10px] text-slate-500">${this.formatDate(item.updated_at)}</span>
-            </div>
+            <span class="text-xs sm:text-[13px] font-bold text-slate-200 truncate leading-tight">${this.escapeHTML(item.display_name)}</span>
           </div>
-          <div class="flex items-center gap-1 font-mono font-black text-sm text-cyan-400">
+          <div class="flex items-center gap-1 font-mono font-black text-sm text-cyan-400 shrink-0 ml-2">
             <span>${item.score.toLocaleString()}</span>
             <span class="text-[10px] text-slate-500 uppercase font-sans">điểm</span>
           </div>
@@ -368,8 +373,17 @@ export class LeaderboardManager {
   formatDate(dateStr) {
     if (!dateStr) return '';
     try {
+      if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+        const parts = dateStr.split('T')[0].split('-');
+        const day = parts[2].padStart(2, '0');
+        const month = parts[1].padStart(2, '0');
+        return `Ngày ${day}/${month}`;
+      }
       const d = new Date(dateStr);
-      return `${d.getDate()}/${d.getMonth() + 1}`;
+      if (isNaN(d.getTime())) return '';
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      return `Ngày ${day}/${month}`;
     } catch (e) {
       return '';
     }
@@ -475,6 +489,11 @@ export class LeaderboardManager {
 
         if (!displayName || displayName.length < 2) {
           this.showError('Tên người chơi phải có ít nhất 2 ký tự');
+          return;
+        }
+
+        if (displayName.length > 20) {
+          this.showError('Tên người chơi không được vượt quá 20 ký tự');
           return;
         }
 

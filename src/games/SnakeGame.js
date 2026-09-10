@@ -4,20 +4,23 @@ import { soundEngine } from './SoundEngine.js';
 export class SnakeGame extends BaseGame {
   constructor() {
     super();
-    this.gridSize = 20;
-    this.tileCount = 20;
+    this.tileCount = 16; // Giảm mật độ ô xuống 16x16 để thân rắn to rõ, mồi nổi bật & nhịp độ nhanh hơn
+    this.gridSize = 24;
 
     this.snake = [
-      { x: 10, y: 10 },
-      { x: 10, y: 11 },
-      { x: 10, y: 12 }
+      { x: 8, y: 8 },
+      { x: 8, y: 9 },
+      { x: 8, y: 10 }
     ];
     this.dx = 0;
     this.dy = -1;
     this.nextDx = 0;
     this.nextDy = -1;
-    this.food = { x: 5, y: 5 };
-    this.speed = 105; // ms per tick
+    this.food = { x: 4, y: 4 };
+    // Tốc độ khởi đầu baseSpeed = 160ms mỗi bước di chuyển
+    this.baseSpeed = 160;
+    this.speed = 160;
+    this.foodCount = 0;
     this.lastTick = 0;
     this.highScore = parseInt(localStorage.getItem('snake_high_score') || '0', 10);
 
@@ -112,9 +115,15 @@ export class SnakeGame extends BaseGame {
 
   setupCanvas() {
     if (!this.canvas) return;
-    const parent = this.canvas.parentElement;
-    const parentW = parent ? parent.clientWidth : Math.min(window.innerWidth * 0.92, 420);
-    const size = Math.floor(Math.min(parentW || 380, window.innerHeight * 0.52, 420));
+    const viewport = document.getElementById('canvasViewport');
+    const viewportW = viewport ? viewport.clientWidth : window.innerWidth;
+    // Mở rộng bề ngang tương đương game Xếp Hình (90-94% viewport mobile, max 400px)
+    const targetW = Math.floor(Math.min(viewportW > 0 ? viewportW * 0.94 : 380, 400));
+    const viewportH = viewport ? viewport.clientHeight : 500;
+    const maxH = Math.floor(Math.min(viewportH > 150 ? viewportH : (window.innerHeight - 180), 440));
+    const rawSize = Math.floor(Math.min(targetW, maxH));
+    this.gridSize = Math.floor(rawSize / this.tileCount);
+    const size = this.gridSize * this.tileCount;
 
     const dpr = window.devicePixelRatio || 1;
     this.canvas.width = size * dpr;
@@ -125,20 +134,21 @@ export class SnakeGame extends BaseGame {
     this.ctx.scale(dpr, dpr);
     this.width = size;
     this.height = size;
-    this.gridSize = Math.floor(size / this.tileCount);
   }
 
   start() {
     this.snake = [
-      { x: 10, y: 10 },
-      { x: 10, y: 11 },
-      { x: 10, y: 12 }
+      { x: 8, y: 8 },
+      { x: 8, y: 9 },
+      { x: 8, y: 10 }
     ];
     this.dx = 0;
     this.dy = -1;
     this.nextDx = 0;
     this.nextDy = -1;
     this.score = 0;
+    this.foodCount = 0;
+    this.speed = this.baseSpeed;
     this.state = 'PLAYING';
     this.spawnFood();
     this.updateScore(0);
@@ -188,6 +198,9 @@ export class SnakeGame extends BaseGame {
     // Food collision
     if (head.x === this.food.x && head.y === this.food.y) {
       this.score += 10;
+      this.foodCount++;
+      // Cơ chế tăng tốc: Cứ mỗi 5 điểm (ăn 5 mồi), giảm khoảng thời gian tick 8ms, sàn tối thiểu 70ms:
+      this.speed = Math.max(70, this.baseSpeed - (Math.floor(this.foodCount / 5) * 8));
       soundEngine.playScore();
       this.spawnFood();
       this.updateScore(this.score);
@@ -223,9 +236,9 @@ export class SnakeGame extends BaseGame {
     this.ctx.save();
     this.ctx.fillStyle = '#f43f5e';
     this.ctx.shadowColor = '#f43f5e';
-    this.ctx.shadowBlur = 12;
+    this.ctx.shadowBlur = 14;
     this.ctx.beginPath();
-    this.ctx.arc(this.food.x * gs + gs / 2, this.food.y * gs + gs / 2, gs / 2 - 2, 0, Math.PI * 2);
+    this.ctx.arc(this.food.x * gs + gs / 2, this.food.y * gs + gs / 2, Math.max(4, gs / 2 - 2), 0, Math.PI * 2);
     this.ctx.fill();
     this.ctx.restore();
 
@@ -236,11 +249,12 @@ export class SnakeGame extends BaseGame {
       this.ctx.fillStyle = isHead ? '#39ff14' : `rgba(57, 255, 20, ${Math.max(0.35, 1 - i * 0.035)})`;
       if (isHead) {
         this.ctx.shadowColor = '#39ff14';
-        this.ctx.shadowBlur = 10;
+        this.ctx.shadowBlur = 12;
       }
       this.ctx.beginPath();
+      const cornerRadius = isHead ? Math.max(5, Math.round(gs * 0.24)) : Math.max(3, Math.round(gs * 0.15));
       if (this.ctx.roundRect) {
-        this.ctx.roundRect(seg.x * gs + 1, seg.y * gs + 1, gs - 2, gs - 2, isHead ? 5 : 3);
+        this.ctx.roundRect(seg.x * gs + 1, seg.y * gs + 1, gs - 2, gs - 2, cornerRadius);
       } else {
         this.ctx.rect(seg.x * gs + 1, seg.y * gs + 1, gs - 2, gs - 2);
       }
@@ -248,9 +262,10 @@ export class SnakeGame extends BaseGame {
 
       if (isHead) {
         this.ctx.fillStyle = '#000000';
+        const eyeRadius = Math.max(2, Math.round(gs * 0.1));
         this.ctx.beginPath();
-        this.ctx.arc(seg.x * gs + gs * 0.35, seg.y * gs + gs * 0.35, 2, 0, Math.PI * 2);
-        this.ctx.arc(seg.x * gs + gs * 0.65, seg.y * gs + gs * 0.35, 2, 0, Math.PI * 2);
+        this.ctx.arc(seg.x * gs + gs * 0.35, seg.y * gs + gs * 0.35, eyeRadius, 0, Math.PI * 2);
+        this.ctx.arc(seg.x * gs + gs * 0.65, seg.y * gs + gs * 0.35, eyeRadius, 0, Math.PI * 2);
         this.ctx.fill();
       }
       this.ctx.restore();

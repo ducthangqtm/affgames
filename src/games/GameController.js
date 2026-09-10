@@ -37,6 +37,18 @@ export class GameController {
     const GameClass = this.gameMap[gameId];
     this.currentGame = new GameClass();
 
+    if (this.canvas && this.canvas.parentElement) {
+      if (gameId === 'tetris') {
+        this.canvas.parentElement.classList.add('tetris-frame');
+        this.canvas.style.borderBottomLeftRadius = '0px';
+        this.canvas.parentElement.style.borderBottomLeftRadius = '0px';
+      } else {
+        this.canvas.parentElement.classList.remove('tetris-frame');
+        this.canvas.style.borderBottomLeftRadius = '';
+        this.canvas.parentElement.style.borderBottomLeftRadius = '';
+      }
+    }
+
     this.currentGame.init(this.canvas, {
       onGameOver: (score) => {
         if (this.onGameOverCallback) {
@@ -54,7 +66,10 @@ export class GameController {
   }
 
   startCurrentGame() {
-    if (this.currentGame) {
+    if (!this.currentGame) return;
+    if (this.currentGameId === 'jump' && typeof this.currentGame.showStartScreen === 'function') {
+      this.currentGame.showStartScreen();
+    } else {
       this.currentGame.start();
     }
   }
@@ -64,31 +79,42 @@ export class GameController {
     this.controlsContainer.innerHTML = '';
 
     if (gameId === 'jump') {
-      const bar = document.createElement('div');
-      bar.className = 'w-full max-w-[300px] mx-auto flex items-center justify-center gap-2 py-2 px-4 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-mono font-bold select-none active:scale-95 transition-transform shadow-lg cursor-pointer';
-      bar.innerHTML = '<span class="text-sm">⚡</span><span>CHẠM MÀN HÌNH ĐỂ NHẢY</span>';
-      bar.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        if (this.currentGame && this.currentGame.state === 'PLAYING') {
-          this.currentGame.jump();
-        } else if (this.currentGame) {
-          this.currentGame.start();
-        }
-      });
-      this.controlsContainer.appendChild(bar);
-    } else if (gameId === 'snake') {
+      // Game Thắng Nhảy Dây: Toàn bộ màn hình là vùng chạm, ẩn hoàn toàn container nút bấm dưới đáy
+      this.controlsContainer.style.display = 'none';
+      return;
+    } else {
+      this.controlsContainer.style.display = '';
+    }
+
+    if (gameId === 'snake') {
       const dpadWrapper = document.createElement('div');
-      dpadWrapper.className = 'w-full flex flex-col items-center justify-center pb-[max(18px,env(safe-area-inset-bottom,18px))] mb-1';
+      dpadWrapper.className = 'w-full flex flex-col items-center justify-center pb-[max(10px,env(safe-area-inset-bottom,10px))] mb-1 select-none';
 
       const dpad = document.createElement('div');
-      dpad.className = 'grid grid-cols-3 gap-3 w-[240px] mx-auto items-center justify-items-center';
+      dpad.className = 'grid grid-cols-3 gap-2.5 w-[240px] mx-auto items-center justify-items-center';
       dpad.innerHTML = `
         <div></div>
-        <button id="dpadUp" class="dpad-btn w-[72px] h-[72px] min-w-[72px] min-h-[72px] bg-slate-800/95 active:bg-emerald-500 text-white rounded-2xl text-2xl font-black border-2 border-emerald-400/50 shadow-xl flex items-center justify-center select-none active:scale-95 transition-transform" title="Lên">▲</button>
+        <button id="dpadUp" class="dpad-btn w-[74px] h-[74px] min-w-[74px] min-h-[74px] bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.2] text-white rounded-[14px] border border-white/10 flex items-center justify-center select-none active:scale-95 transition-all touch-manipulation cursor-pointer" title="Lên">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
         <div></div>
-        <button id="dpadLeft" class="dpad-btn w-[72px] h-[72px] min-w-[72px] min-h-[72px] bg-slate-800/95 active:bg-emerald-500 text-white rounded-2xl text-2xl font-black border-2 border-emerald-400/50 shadow-xl flex items-center justify-center select-none active:scale-95 transition-transform" title="Trái">◀</button>
-        <button id="dpadDown" class="dpad-btn w-[72px] h-[72px] min-w-[72px] min-h-[72px] bg-slate-800/95 active:bg-emerald-500 text-white rounded-2xl text-2xl font-black border-2 border-emerald-400/50 shadow-xl flex items-center justify-center select-none active:scale-95 transition-transform" title="Xuống">▼</button>
-        <button id="dpadRight" class="dpad-btn w-[72px] h-[72px] min-w-[72px] min-h-[72px] bg-slate-800/95 active:bg-emerald-500 text-white rounded-2xl text-2xl font-black border-2 border-emerald-400/50 shadow-xl flex items-center justify-center select-none active:scale-95 transition-transform" title="Phải">▶</button>
+        <button id="dpadLeft" class="dpad-btn w-[74px] h-[74px] min-w-[74px] min-h-[74px] bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.2] text-white rounded-[14px] border border-white/10 flex items-center justify-center select-none active:scale-95 transition-all touch-manipulation cursor-pointer" title="Trái">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button id="dpadDown" class="dpad-btn w-[74px] h-[74px] min-w-[74px] min-h-[74px] bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.2] text-white rounded-[14px] border border-white/10 flex items-center justify-center select-none active:scale-95 transition-all touch-manipulation cursor-pointer" title="Xuống">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <button id="dpadRight" class="dpad-btn w-[74px] h-[74px] min-w-[74px] min-h-[74px] bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.2] text-white rounded-[14px] border border-white/10 flex items-center justify-center select-none active:scale-95 transition-all touch-manipulation cursor-pointer" title="Phải">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       `;
       dpadWrapper.appendChild(dpad);
       this.controlsContainer.appendChild(dpadWrapper);
@@ -113,33 +139,35 @@ export class GameController {
       this.controlsContainer.innerHTML = '';
     } else if (gameId === 'tetris') {
       const wrapper = document.createElement('div');
-      wrapper.className = 'flex items-center justify-between w-full max-w-sm px-3 mx-auto';
+      wrapper.className = 'flex items-center justify-center gap-2.5 sm:gap-3.5 w-full max-w-sm px-2.5 mx-auto select-none';
       wrapper.innerHTML = `
-        <!-- Cụm trái: 2 nút [ ◀ TRÁI ] và [ PHẢI ▶ ] kích thước lớn 64x64px -->
-        <div class="flex items-center gap-2.5">
-          <button id="tetrisLeft" class="w-16 h-16 min-w-[64px] min-h-[64px] bg-slate-800/95 active:bg-cyan-500 text-white rounded-2xl text-2xl font-black border border-cyan-400/40 shadow-lg flex items-center justify-center select-none active:scale-95 transition-transform" title="Sang Trái">
-            ◀
-          </button>
-          <button id="tetrisRight" class="w-16 h-16 min-w-[64px] min-h-[64px] bg-slate-800/95 active:bg-cyan-500 text-white rounded-2xl text-2xl font-black border border-cyan-400/40 shadow-lg flex items-center justify-center select-none active:scale-95 transition-transform" title="Sang Phải">
-            ▶
-          </button>
-        </div>
+        <!-- Nút Trái [ ◀ ] -->
+        <button id="tetrisLeft" class="flex-1 h-[76px] min-h-[76px] max-w-[82px] bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.2] text-white rounded-[18px] border border-white/10 flex items-center justify-center select-none active:scale-95 transition-all touch-manipulation cursor-pointer" title="Sang Trái">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
 
-        <!-- Nút ở giữa: [ ⚡ THẢ NHANH ] đặt ở vị trí giữa, tách biệt khoảng cách với nút XOAY -->
-        <div class="flex items-center justify-center px-2">
-          <button id="tetrisDropBtn" class="h-16 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 active:scale-95 text-white font-black rounded-2xl text-xs flex flex-col items-center justify-center shadow-lg border border-cyan-300/40 select-none transition-transform" title="Rơi nhanh">
-            <span class="text-xl leading-none mb-0.5">⚡</span>
-            <span class="text-[11px] uppercase tracking-wider font-extrabold whitespace-nowrap">THẢ NHANH</span>
-          </button>
-        </div>
+        <!-- Nút Phải [ ▶ ] -->
+        <button id="tetrisRight" class="flex-1 h-[76px] min-h-[76px] max-w-[82px] bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.2] text-white rounded-[18px] border border-white/10 flex items-center justify-center select-none active:scale-95 transition-all touch-manipulation cursor-pointer" title="Sang Phải">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
 
-        <!-- Cụm phải: Nút [ 🔄 XOAY ] đặt ngoài cùng bên phải, tròn to nổi bật màu tím neon gradient -->
-        <div class="flex items-center justify-end">
-          <button id="tetrisRotateBtn" class="w-16 h-16 min-w-[64px] min-h-[64px] rounded-full bg-gradient-to-tr from-purple-600 via-fuchsia-500 to-pink-500 active:scale-95 text-white font-black text-xs flex flex-col items-center justify-center shadow-[0_0_20px_rgba(217,70,239,0.5)] border-2 border-purple-300/60 select-none transition-transform" title="Xoay khối">
-            <span class="text-xl leading-none mb-0.5">🔄</span>
-            <span class="text-[11px] uppercase tracking-wider font-extrabold">XOAY</span>
-          </button>
-        </div>
+        <!-- Nút Thả nhanh [ ⏬ ] (Double chevron down, màu trắng căn giữa) -->
+        <button id="tetrisDropBtn" class="flex-1 h-[76px] min-h-[76px] max-w-[82px] bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.2] text-white rounded-[18px] border border-white/10 flex items-center justify-center select-none active:scale-95 transition-all touch-manipulation cursor-pointer" title="Thả nhanh">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-7 7-7-7M19 13l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <!-- Nút Xoay [ 🔄 ] (Rotate arrow, màu trắng căn giữa) -->
+        <button id="tetrisRotateBtn" class="flex-1 h-[76px] min-h-[76px] max-w-[82px] bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.2] text-white rounded-[18px] border border-white/10 flex items-center justify-center select-none active:scale-95 transition-all touch-manipulation cursor-pointer" title="Xoay khối">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h5M20 20v-5h-5M4.5 9A8 8 0 0 1 19.5 7.5M19.5 15a8 8 0 0 1-15 1.5" />
+          </svg>
+        </button>
       `;
       this.controlsContainer.appendChild(wrapper);
 
@@ -167,6 +195,7 @@ export class GameController {
     }
     if (this.controlsContainer) {
       this.controlsContainer.innerHTML = '';
+      this.controlsContainer.style.display = '';
     }
   }
 }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap');
 
 :root {
   --bg-dark: #090d16;
@@ -11,10 +11,13 @@
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--bg-dark);
   color: #f1f5f9;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 .admin-card {
@@ -81,4 +84,30 @@ body {
   color: #00f0ff;
   box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
 }
+
+/* Khung xem trước ảnh sản phẩm tỉ lệ 1:1 căn giữa */
+.image-preview-frame {
+  width: 170px;
+  height: 170px;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #020617;
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  padding: 0.35rem;
+}
+
+.image-preview-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
 
