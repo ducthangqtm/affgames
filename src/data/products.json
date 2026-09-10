@@ -5,6 +5,22 @@
   ],
   "products": [
     {
+      "id": "prod-1789049110508",
+      "name": "Xà Đơn Xà Kép Treo Tường Đa Năng INFIT Pro",
+      "category": "Đồ Tập Tại Nhà",
+      "affiliate_url": "https://s.shopee.vn/6L3zmn4phd",
+      "image_url": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpmgblon8l0b82.webp",
+      "price": "Giá tốt"
+    },
+    {
+      "id": "prod-1789049100429",
+      "name": "Xà đơn gắn cửa GoodFit GF01PU",
+      "category": "Đồ Tập Tại Nhà",
+      "affiliate_url": "https://s.shopee.vn/20v0ckoEFT",
+      "image_url": "https://down-vn.img.susercontent.com/file/vn-11134207-81ztc-mq31d8k1qf4c54.webp",
+      "price": "Giá tốt"
+    },
+    {
       "id": "prod-1",
       "name": "Dây Nhảy Tốc Độ PVC 5mm Chuyên Nghiệp - Tay Cầm Nhẹ Chống Trượt",
       "category": "Đồ Nhảy Dây",
