@@ -1,7 +1,6 @@
 {
   "categories": [
-    "Dây nhảy",
-    "Đồ tập & Giày"
+    "Dây nhảy"
   ],
   "products": [
     {
@@ -31,7 +30,7 @@
     {
       "id": "prod-4",
       "name": "Giày Tập Luyện Đa Năng Đế Đệm Êm Chống Lật Cổ Chân Siêu Nhẹ",
-      "category": "Đồ tập & Giày",
+      "category": "Dây nhảy",
       "affiliate_url": "https://shopee.vn/search?keyword=giay%20tap%20training%20chong%20lat%20co%20chan",
       "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&auto=format&fit=crop&q=80",
       "price": "490.000₫"
