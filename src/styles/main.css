@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap');
+
+:root {
+  --bg-main: #060913;
+  --panel-bg: rgba(13, 19, 36, 0.7);
+  --panel-border: rgba(30, 41, 59, 0.8);
+  --cyan-neon: #00f0ff;
+  --amber-neon: #ffd60a;
+  --rose-neon: #f43f5e;
+  --emerald-neon: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 100% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 0% 80%, rgba(244, 63, 94, 0.05) 0%, transparent 40%);
+  background-attachment: fixed;
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.font-display {
+  font-family: 'Chakra Petch', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--panel-border);
+  border-radius: 1.25rem;
+}
+
+/* Neon Glows */
+.glow-cyan {
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.25);
+}
+
+.glow-amber {
+  box-shadow: 0 0 25px rgba(255, 214, 10, 0.25);
+}
+
+.avatar-glow {
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.4), 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+/* CSS Scroll Snap Carousel */
+.carousel-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+.game-card {
+  scroll-snap-align: center;
+  flex: 0 0 82%;
+  max-width: 320px;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+@media (min-width: 640px) {
+  .game-card {
+    flex: 0 0 290px;
+  }
+}
+
+/* Custom Buttons */
+.btn-neon {
+  background: linear-gradient(135deg, #00f0ff 0%, #0077ff 100%);
+  color: #020617;
+  font-weight: 800;
+  border-radius: 0.85rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+}
+
+.btn-neon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(0, 240, 255, 0.45);
+}
+
+.btn-neon:active {
+  transform: scale(0.97);
+}
+
+.btn-donate {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-donate:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.btn-donate:active {
+  transform: scale(0.97);
+}
+
+/* Main Navigation 2 Tabs */
+.main-nav-tab {
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.main-nav-tab.active-tab {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(2, 132, 199, 0.2) 100%);
+  border-color: rgba(0, 240, 255, 0.5);
+  color: #00f0ff;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+}
+
+/* Modal Input Field Neon Styling */
+.input-field {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(0, 240, 255, 0.4) !important;
+  color: #ffffff !important;
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.875rem;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input-field::placeholder {
+  color: #94a3b8 !important;
+}
+
+.input-field:focus {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35) !important;
+}
+
+/* Carousel Drag Cursor */
+.carousel-container {
+  cursor: grab;
+}
+
+.carousel-container.cursor-grabbing {
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* D-Pad Buttons */
+.dpad-btn {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  transition: background-color 0.1s, transform 0.1s;
+}
+
+.dpad-btn:active {
+  transform: scale(0.94);
+}
+
+/* Arcade Cabinet Frame (2-layer Bezel & Cyberpunk Neon) */
+.arcade-cabinet-frame {
+  width: min(92vw, 420px);
+  position: relative;
+  border: 3px solid #00f2fe;
+  border-radius: 20px;
+  outline: 6px solid rgba(255, 255, 255, 0.05);
+  outline-offset: 0px;
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.35), inset 0 0 15px rgba(0, 242, 254, 0.2);
+  background: #050813;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0 auto;
+}
+
+/* Corner Arcade Metallic Bolts */
+.arcade-bolt {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00f0ff;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 0 8px #00f0ff;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Leaderboard Pill Tabs */
+.leaderboard-tab {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.leaderboard-tab.active-pill {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(234, 179, 8, 0.2) 100%) !important;
+  color: #fde047 !important;
+  border: 1px solid rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2) !important;
+  font-weight: 800 !important;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s infinite ease-in-out;
+}

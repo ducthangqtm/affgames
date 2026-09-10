@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Thắng Nhảy Dây | Bio-Link & Arcade Hub 4-in-1</title>
+  <meta name="description" content="Chia sẻ kỹ thuật nhảy dây giảm mỡ, đồ tập tại nhà chất lượng và Arcade Hub 4 game Retro Neon với Bảng Vàng Top 10." />
+  <link rel="icon" type="image/svg+xml" href="/assets/logo-tit.svg" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen pb-16">
+  <div class="max-w-md mx-auto px-4 pt-6 space-y-6">
+
+    <!-- 1. PROFILE HEADER -->
+    <header class="glass-panel p-5 text-center relative overflow-hidden">
+      <!-- Glow background decoration -->
+      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <!-- Avatar -->
+      <div class="relative inline-block mb-3">
+        <img
+          src="/assets/avatar.jpg"
+          alt="Thắng Nhảy Dây"
+          class="w-24 h-24 rounded-full object-cover avatar-glow mx-auto border-2 border-cyan-400/80"
+        />
+        <div class="absolute -bottom-1 -right-1 bg-cyan-500 text-slate-950 p-1 rounded-full shadow-lg" title="Xác minh chính chủ">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Tên & Username -->
+      <div class="flex items-center justify-center gap-1.5 mb-0.5">
+        <h1 class="text-xl font-black text-white tracking-wide">Thắng Nhảy Dây</h1>
+        <!-- Tích xanh chính chủ -->
+        <span class="text-cyan-400" title="Đã xác minh">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </span>
+      </div>
+      <p class="text-xs font-mono text-cyan-400/90 font-bold mb-3">@thangnhayday</p>
+
+      <!-- Bio -->
+      <p class="text-xs text-slate-300 leading-relaxed max-w-sm mx-auto mb-4">
+        Chia sẻ hành trình 100 ngày nhảy dây giảm mỡ bụng, cải thiện vóc dáng & thể lực mỗi ngày. Khám phá kỹ thuật nhảy dây và đồ tập tại nhà chất lượng! 💪🔥
+      </p>
+
+      <!-- Social & Donate Row (5 items on 1 horizontal row) -->
+      <div class="grid grid-cols-5 gap-2 my-3">
+        <!-- 1. Facebook -->
+        <a href="https://facebook.com/thangnhayday" target="_blank" rel="noopener noreferrer" class="h-11 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 flex items-center justify-center transition hover:scale-105 active:scale-95 shadow-sm" title="Facebook @thangnhayday">
+          <svg class="w-5 h-5 fill-[#1877F2]" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <!-- 2. YouTube -->
+        <a href="https://youtube.com/@thangnhayday" target="_blank" rel="noopener noreferrer" class="h-11 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 flex items-center justify-center transition hover:scale-105 active:scale-95 shadow-sm" title="YouTube @thangnhayday">
+          <svg class="w-5 h-5 fill-[#FF0000]" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+        <!-- 3. TikTok -->
+        <a href="https://tiktok.com/@thangnhayday" target="_blank" rel="noopener noreferrer" class="h-11 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 flex items-center justify-center transition hover:scale-105 active:scale-95 shadow-sm" title="TikTok @thangnhayday">
+          <svg class="w-5 h-5 fill-[#FFFFFF] drop-shadow-[0_0_2px_rgba(0,240,255,0.8)]" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.27 1.76-.23 1.06-.02 2.22.61 3.09.6.83 1.58 1.34 2.61 1.38 1.02.05 2.05-.33 2.76-1.07.67-.71.95-1.68.95-2.65V.02z"/></svg>
+        </a>
+        <!-- 4. Telegram -->
+        <a href="https://t.me/thangnhayday" target="_blank" rel="noopener noreferrer" class="h-11 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 flex items-center justify-center transition hover:scale-105 active:scale-95 shadow-sm" title="Telegram @thangnhayday">
+          <svg class="w-5 h-5 fill-[#229ED9]" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.941z"/></svg>
+        </a>
+        <!-- 5. Nút Donate Mời Cà Phê -->
+        <button id="donateBtn" class="relative h-11 rounded-xl bg-[#1a1e29] hover:bg-[#222736] border border-[#F5A623]/50 flex items-center justify-center transition hover:scale-105 active:scale-95 shadow-sm shadow-amber-500/10 cursor-pointer" title="Mời cà phê / Donate ủng hộ">
+          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FFB020] ring-2 ring-[#060913] animate-pulse"></span>
+          <svg class="w-5 h-5 fill-[#FFB020]" viewBox="0 0 24 24"><path d="M2 19h18v2H2v-2zm2-17h13a2 2 0 0 1 2 2v2h1a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V2zm13 4V4H4v11a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V6zm2 2v4h1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-1zM6 1h2v2H6V1zm4-1h2v3h-2V0zm4 1h2v2h-2V1z"/></svg>
+        </button>
+      </div>
+      <!-- Main Navigation 2 Tabs -->
+      <div class="grid grid-cols-2 gap-2 mt-4 p-1 bg-slate-950/90 rounded-2xl border border-slate-800">
+        <button id="mainTabProducts" class="main-nav-tab active-tab py-2.5 px-2 rounded-xl font-black text-xs transition flex items-center justify-center gap-1.5 shadow-md">
+          <span>🛍️</span><span>ĐỒ TẬP & PHỤ KIỆN</span>
+        </button>
+        <button id="mainTabArcade" class="main-nav-tab py-2.5 px-2 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+          <span>🎮</span><span>TRÒ CHƠI (ARCADE)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- TAB 1: SẢN PHẨM AFFILIATE (MẶC ĐỊNH ACTIVE) -->
+    <div id="tabContentProducts" class="space-y-4">
+      <section class="glass-panel p-4 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display font-black text-sm text-cyan-400 tracking-wider flex items-center gap-1.5">
+              <span>🛍️</span><span>GỢI Ý ĐỒ TẬP CHẤT LƯỢNG</span>
+            </h2>
+            <p class="text-[11px] text-slate-400">Các sản phẩm Thắng đã dùng và trải nghiệm thực tế</p>
+          </div>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div id="categoryTabs" class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <!-- Render qua affiliate.js -->
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-2 gap-3">
+          <!-- Render qua affiliate.js -->
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 2: ARCADE HUB 4-IN-1 & BẢNG VÀNG (ẨN MẶC ĐỊNH) -->
+    <div id="tabContentArcade" class="space-y-4 hidden">
+      <section class="glass-panel p-4 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display font-black text-sm text-cyan-400 tracking-wider flex items-center gap-1.5">
+              <span>🕹️</span><span>ARCADE HUB 4-IN-1</span>
+            </h2>
+            <p class="text-[11px] text-slate-400">Vuốt hoặc kéo chuột để chọn game & xem Top 10 Bảng Vàng</p>
+          </div>
+          <span class="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-[10px] font-mono text-cyan-300 font-bold">
+            D1 SYNC
+          </span>
+        </div>
+
+        <!-- Carousel Scroll Snap -->
+        <div id="gameCarousel" class="carousel-container gap-3 py-1">
+          <!-- Game 1: Thắng Nhảy Dây -->
+          <div class="game-card glass-panel p-3 border border-slate-700/80 rounded-2xl flex flex-col justify-between cursor-pointer" data-game-id="jump">
+            <div>
+              <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 mb-2.5">
+                <img src="/assets/thang-rope-thumb.jpg" alt="Thắng Nhảy Dây" class="w-full h-full object-cover pointer-events-none" />
+                <span class="absolute top-2 left-2 px-2 py-0.5 rounded bg-amber-500/90 text-slate-950 text-[10px] font-black uppercase">
+                  HOT
+                </span>
+              </div>
+              <h3 class="text-xs font-black text-white">Thắng Nhảy Dây</h3>
+              <p class="text-[11px] text-slate-400">Thử thách nhịp điệu hành lang 1m5</p>
+            </div>
+            <button class="launch-game-btn mt-3 w-full btn-neon py-2 text-xs font-black" data-game-id="jump">
+              CHƠI NGAY ▶
+            </button>
+          </div>
+
+          <!-- Game 2: Cyber Snake -->
+          <div class="game-card glass-panel p-3 border border-slate-700/80 rounded-2xl flex flex-col justify-between cursor-pointer" data-game-id="snake">
+            <div>
+              <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 mb-2.5">
+                <img src="/assets/cyber-snake-thumb.jpg" alt="Cyber Snake" class="w-full h-full object-cover pointer-events-none" />
+                <span class="absolute top-2 left-2 px-2 py-0.5 rounded bg-emerald-500/90 text-slate-950 text-[10px] font-black uppercase">
+                  ARCADE
+                </span>
+              </div>
+              <h3 class="text-xs font-black text-white">Cyber Snake</h3>
+              <p class="text-[11px] text-slate-400">Rắn săn mồi Neon xuyên tường</p>
+            </div>
+            <button class="launch-game-btn mt-3 w-full btn-neon py-2 text-xs font-black" data-game-id="snake">
+              CHƠI NGAY ▶
+            </button>
+          </div>
+
+          <!-- Game 3: 2048 Neon -->
+          <div class="game-card glass-panel p-3 border border-slate-700/80 rounded-2xl flex flex-col justify-between cursor-pointer" data-game-id="2048">
+            <div>
+              <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 mb-2.5">
+                <img src="/assets/neon-2048-thumb.jpg" alt="2048 Neon" class="w-full h-full object-cover pointer-events-none" />
+                <span class="absolute top-2 left-2 px-2 py-0.5 rounded bg-rose-500/90 text-white text-[10px] font-black uppercase">
+                  PUZZLE
+                </span>
+              </div>
+              <h3 class="text-xs font-black text-white">2048 Neon</h3>
+              <p class="text-[11px] text-slate-400">Trượt số ghép khối neon 60FPS</p>
+            </div>
+            <button class="launch-game-btn mt-3 w-full btn-neon py-2 text-xs font-black" data-game-id="2048">
+              CHƠI NGAY ▶
+            </button>
+          </div>
+
+          <!-- Game 4: Xếp Hình Neon -->
+          <div class="game-card glass-panel p-3 border border-slate-700/80 rounded-2xl flex flex-col justify-between cursor-pointer" data-game-id="tetris">
+            <div>
+              <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 mb-2.5">
+                <img src="/assets/tetris-thumb.jpg" alt="Xếp Hình Neon" class="w-full h-full object-cover pointer-events-none" />
+                <span class="absolute top-2 left-2 px-2 py-0.5 rounded bg-purple-500/90 text-white text-[10px] font-black uppercase">
+                  RETRO
+                </span>
+              </div>
+              <h3 class="text-xs font-black text-white">Xếp Hình Neon</h3>
+              <p class="text-[11px] text-slate-400">7-Bag Tetris & hiệu ứng nổ khối</p>
+            </div>
+            <button class="launch-game-btn mt-3 w-full btn-neon py-2 text-xs font-black" data-game-id="tetris">
+              CHƠI NGAY ▶
+            </button>
+          </div>
+        </div>
+
+        <!-- Carousel Dot Indicators -->
+        <div class="flex items-center justify-center gap-1.5 py-1">
+          <button class="carousel-dot h-1.5 rounded-full transition-all bg-cyan-400 w-6" data-game-id="jump"></button>
+          <button class="carousel-dot h-1.5 rounded-full transition-all bg-slate-700 w-2" data-game-id="snake"></button>
+          <button class="carousel-dot h-1.5 rounded-full transition-all bg-slate-700 w-2" data-game-id="2048"></button>
+          <button class="carousel-dot h-1.5 rounded-full transition-all bg-slate-700 w-2" data-game-id="tetris"></button>
+        </div>
+
+        <!-- 3. TOP 10 BẢNG VÀNG CỦA GAME ĐANG ACTIVE -->
+        <div class="pt-2 border-t border-slate-800">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-black text-amber-400 flex items-center gap-1.5 font-display">
+              <span>🏆</span><span id="activeGameTitle">BẢNG VÀNG TOP 10: THẮNG NHẢY DÂY</span>
+            </h3>
+            <span class="text-[10px] text-slate-500 font-mono" id="leaderboardScopeTag">#WEEKLY</span>
+          </div>
+
+          <!-- 2 Pill Tabs: Tuần này & Kỷ lục (Chỉ hiển thị cho trò Thắng Nhảy Dây) -->
+          <div id="leaderboardNavContainer" class="flex items-center justify-between gap-2 mb-2">
+            <div class="p-1 bg-slate-950/90 rounded-xl border border-slate-800/90 flex items-center gap-1 w-full max-w-[220px]">
+              <button id="leaderboardTabWeekly" class="leaderboard-tab active-pill flex-1 py-1.5 px-2 rounded-lg text-xs transition flex items-center justify-center gap-1" data-type="weekly">
+                <span>🔥</span><span>Đua Top Tuần</span>
+              </button>
+              <button id="leaderboardTabAllTime" class="leaderboard-tab flex-1 py-1.5 px-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition flex items-center justify-center gap-1" data-type="all_time">
+                <span>👑</span><span>Kỷ lục All-Time</span>
+              </button>
+            </div>
+            <span class="text-[10px] text-slate-500">Tự động cập nhật</span>
+          </div>
+
+          <!-- Banner Đua Top Tuần Nhận Quà (Chỉ cho Thắng Nhảy Dây) -->
+          <div id="weeklyRewardBanner" class="p-2.5 rounded-xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-bold flex items-center gap-2 mb-2 shadow-sm">
+            <span class="text-base">🎁</span>
+            <span class="leading-tight">Top 1 Tuần nhận ngay 1 Dây nhảy PVC Thắng Nhảy Dây (Chốt 23:59 Chủ Nhật)!</span>
+          </div>
+
+          <!-- Badge Vinh Danh Quán Quân Tuần Trước -->
+          <div id="lastWeekWinnerBadge" class="p-2 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 text-xs font-bold flex items-center gap-2 mb-2.5 shadow-sm">
+            <span class="text-base">👑</span>
+            <span class="text-[11px] font-mono leading-tight">Quán quân tuần trước: <strong id="lastWeekWinnerName" class="text-amber-300 font-sans">Hoàng_Jump_99</strong> (<span id="lastWeekWinnerScore" class="text-cyan-400">98</span> điểm)</span>
+          </div>
+
+          <div id="leaderboardList" class="space-y-1.5">
+            <!-- Render tự động qua leaderboard.js -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="text-center text-xs text-slate-500 pt-2 space-y-2">
+      <p>© 2026 Thắng Nhảy Dây • All-in-One Web App</p>
+      <div class="flex items-center justify-center gap-4 text-[11px]">
+        <a href="/admin.html" class="text-slate-400 hover:text-cyan-400 transition flex items-center gap-1">
+          <span>⚙️</span><span>Quản trị Sản phẩm</span>
+        </a>
+        <span>•</span>
+        <a href="#donateModal" id="footerDonateLink" class="text-amber-400 hover:underline">Ủng hộ cà phê</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ================= MODALS & GAME VIEWPORT ================= -->
+
+  <!-- A. MODAL CHƠI GAME DÙNG CHUNG 1 CANVAS DUY NHẤT -->
+  <div id="arcadeModal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden flex-col items-center justify-between p-2.5 z-50 overflow-hidden">
+    <!-- Game Modal Header -->
+    <div class="w-full max-w-md flex items-center justify-between py-1.5 px-3 border-b border-slate-800/80 mb-1">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span id="modalGameName" class="text-xs font-black text-white font-display uppercase tracking-wider">Thắng Nhảy Dây</span>
+      </div>
+
+      <!-- HUD Mini: Điểm -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1 text-xs">
+          <span class="text-slate-400">Điểm:</span>
+          <span id="modalCurrentScore" class="font-mono font-black text-cyan-400 text-sm">0</span>
+        </div>
+        <button id="soundToggleBtn" class="p-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs hover:text-white" title="Bật/Tắt âm thanh">
+          🔊
+        </button>
+        <button id="closeArcadeBtn" class="p-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold hover:text-rose-400" title="Đóng game">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Canvas Container (Độc quyền 1 thẻ canvas duy nhất phóng to 92vw) -->
+    <div id="canvasViewport" class="flex-1 w-full flex items-center justify-center relative overflow-hidden my-0.5">
+      <div class="arcade-cabinet-frame">
+        <!-- Arcade Header Bezel Strip -->
+        <div class="w-full flex items-center justify-between px-3 py-1 bg-slate-950/95 border-b border-cyan-500/30 text-[10px] font-mono select-none">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e] animate-pulse"></span>
+            <span class="text-cyan-400 font-bold tracking-wider">RETRO-ARCADE</span>
+          </div>
+          <span class="text-[9px] text-slate-500 tracking-widest font-black uppercase">CABINET BEZEL</span>
+          <div class="flex items-center gap-1 text-amber-400 font-bold text-[10px]">
+            <span>CREDIT</span><span class="text-white">01</span>
+          </div>
+        </div>
+
+        <!-- 4 góc ốc vít kim loại Arcade Rivets -->
+        <span class="arcade-bolt top-2 left-2"></span>
+        <span class="arcade-bolt top-2 right-2"></span>
+        <span class="arcade-bolt bottom-2 left-2"></span>
+        <span class="arcade-bolt bottom-2 right-2"></span>
+
+        <!-- Canvas Game -->
+        <canvas id="arcadeCanvas" class="touch-none block max-w-full max-h-full"></canvas>
+      </div>
+    </div>
+
+    <!-- Game On-Screen Touch Controls Container -->
+    <div id="gameControlsContainer" class="w-full max-w-md py-2 flex items-center justify-center">
+      <!-- Injected dynamically by GameController -->
+    </div>
+  </div>
+
+  <!-- B. MODAL NHẬP TÊN & PIN KHI LỌT TOP 10 -->
+  <div id="nameModal" class="ui-modal fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="glass-panel max-w-sm w-full p-5 border border-amber-500/40 shadow-2xl relative">
+      <div class="text-center mb-4">
+        <div class="text-3xl mb-1">👑</div>
+        <h3 class="font-display font-black text-lg text-amber-400">BẠN ĐÃ LỌT TOP 10!</h3>
+        <p class="text-xs text-slate-300 mt-1">Xuất sắc! Hãy ghi danh bạn lên Bảng Vàng vinh danh.</p>
+        <div class="mt-2 inline-block px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono font-black text-cyan-300" id="modalScoreBadge">
+          0 ĐIỂM
+        </div>
+      </div>
+
+      <form id="nameModalForm" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Tên hiển thị trên Bảng Vàng *</label>
+          <input
+            type="text"
+            id="playerNameInput"
+            placeholder="VD: Nguyễn Văn A..."
+            maxlength="30"
+            class="input-field text-xs bg-white/10 text-white placeholder-slate-400 border border-cyan-400/40"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Mã PIN bí mật (4 - 6 số) *</label>
+          <input
+            type="password"
+            id="playerPinInput"
+            placeholder="VD: 1234"
+            pattern="[0-9]{4,6}"
+            maxlength="6"
+            class="input-field text-xs font-mono bg-white/10 text-white placeholder-slate-400 border border-cyan-400/40"
+            required
+          />
+          <p class="text-[10px] text-slate-400 mt-1">
+            Mã PIN dùng để bảo vệ tên của bạn không bị người khác ghi đè. Hãy ghi nhớ mã này nhé!
+          </p>
+        </div>
+
+        <!-- Trường Số Zalo / SĐT nhận quà (Chỉ hiển thị cho trò Thắng Nhảy Dây) -->
+        <div id="zaloFieldGroup" class="hidden">
+          <label class="block text-xs font-bold text-amber-300 mb-1 flex items-center justify-between">
+            <span>Số Zalo / SĐT nhận quà 🎁</span>
+            <span class="text-[10px] font-normal text-slate-400">(Không bắt buộc)</span>
+          </label>
+          <input
+            type="tel"
+            id="playerContactInput"
+            placeholder="VD: 0912345678 (để Admin gửi quà)"
+            maxlength="15"
+            class="input-field text-xs bg-white/10 text-white placeholder-slate-400 border border-amber-500/40"
+          />
+          <p class="text-[10px] text-slate-400 mt-1 leading-tight">
+            Thông tin Zalo được ẩn hoàn toàn trên Bảng Vàng, chỉ dùng để Admin đối soát và gửi quà trực tiếp.
+          </p>
+        </div>
+
+        <div id="modalErrorMsg" class="hidden text-xs text-rose-400 font-bold bg-rose-950/50 p-2 rounded-lg border border-rose-800/60"></div>
+
+        <div class="flex items-center gap-2 pt-2">
+          <button type="submit" id="modalSubmitBtn" class="flex-1 btn-neon py-2.5 text-xs font-black">
+            XÁC NHẬN LƯU BẢNG VÀNG
+          </button>
+          <button type="button" id="closeModalBtn" class="px-3 py-2.5 rounded-xl bg-slate-800 text-slate-400 text-xs font-bold hover:bg-slate-700">
+            Bỏ qua
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- C. MODAL DONATE QR -->
+  <div id="donateModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="glass-panel max-w-xs w-full p-5 border border-amber-500/40 shadow-2xl relative text-center">
+      <button id="closeDonateBtn" class="absolute top-3 right-3 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+
+      <div class="text-2xl mb-1">☕</div>
+      <h3 class="font-display font-black text-base text-amber-400">MỜI THẮNG LY CÀ PHÊ</h3>
+      <p class="text-xs text-slate-300 mt-0.5 mb-3.5 leading-relaxed">
+        Sự ủng hộ của bạn là động lực lớn để Thắng ra thêm nhiều video & nội dung giá trị!
+      </p>
+
+      <!-- Tâm điểm: Ảnh mã QR đặt ở giữa, bo góc viền sáng rõ nét -->
+      <div class="relative w-56 h-56 mx-auto rounded-2xl overflow-hidden border-2 border-amber-400/50 shadow-[0_0_20px_rgba(251,191,36,0.25)] bg-white p-2.5 mb-3">
+        <img src="/assets/qr-donate.jpg" alt="Mã QR Chuyển Khoản / MoMo" class="w-full h-full object-contain" />
+      </div>
+
+      <!-- Dòng hướng dẫn ngắn gọn ngay dưới mã QR -->
+      <p class="text-xs text-amber-300/90 font-medium leading-tight mb-4">
+        💡 Quét mã bằng ứng dụng Ngân hàng bất kỳ hoặc MoMo
+      </p>
+
+      <!-- Cụm nút hành động: Nút MoMo to bản nổi bật & Nút Đóng nhẹ nhàng -->
+      <div class="space-y-2">
+        <a id="openMomoBtn" href="https://me.momo.vn/0987654321" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 px-4 rounded-xl bg-[#a50064] hover:bg-[#b80070] text-white text-xs font-black transition flex items-center justify-center gap-2 shadow-lg shadow-pink-900/30 active:scale-[0.98]">
+          <span class="text-base">🟣</span><span>Mở App MoMo</span>
+        </a>
+        <button id="dismissDonateBtn" type="button" class="w-full py-2 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+import { soundEngine } from './games/SoundEngine.js';
+import { GameController } from './games/GameController.js';
+import { GameCarousel } from './modules/carousel.js';
+import { LeaderboardManager } from './modules/leaderboard.js';
+import { AffiliateManager } from './modules/affiliate.js';
+import { DonateModalManager } from './modules/donateModal.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Game Titles mapping
+  const gameTitles = {
+    jump: 'THẮNG NHẢY DÂY',
+    snake: 'CYBER SNAKE',
+    2048: '2048 NEON',
+    tetris: 'XẾP HÌNH NEON'
+  };
+
+  // 0. Bố cục 2 Tab chính (Main Navigation)
+  const tabBtnProducts = document.getElementById('mainTabProducts');
+  const tabBtnArcade = document.getElementById('mainTabArcade');
+  const tabContentProducts = document.getElementById('tabContentProducts');
+  const tabContentArcade = document.getElementById('tabContentArcade');
+
+  const switchMainTab = (activeTab) => {
+    if (activeTab === 'products') {
+      if (tabBtnProducts) {
+        tabBtnProducts.classList.add('active-tab');
+        tabBtnProducts.classList.remove('text-slate-400');
+      }
+      if (tabBtnArcade) {
+        tabBtnArcade.classList.remove('active-tab');
+        tabBtnArcade.classList.add('text-slate-400');
+      }
+      if (tabContentProducts) tabContentProducts.classList.remove('hidden');
+      if (tabContentArcade) tabContentArcade.classList.add('hidden');
+    } else {
+      if (tabBtnArcade) {
+        tabBtnArcade.classList.add('active-tab');
+        tabBtnArcade.classList.remove('text-slate-400');
+      }
+      if (tabBtnProducts) {
+        tabBtnProducts.classList.remove('active-tab');
+        tabBtnProducts.classList.add('text-slate-400');
+      }
+      if (tabContentArcade) tabContentArcade.classList.remove('hidden');
+      if (tabContentProducts) tabContentProducts.classList.add('hidden');
+
+      // 1. Thiết lập game mặc định khi mở tab: Thắng Nhảy Dây (jump) luôn ở vị trí trung tâm
+      setTimeout(() => {
+        if (carousel && carousel.resetToDefault) {
+          carousel.resetToDefault();
+        }
+      }, 40);
+    }
+  };
+
+  if (tabBtnProducts) {
+    tabBtnProducts.addEventListener('click', () => switchMainTab('products'));
+  }
+  if (tabBtnArcade) {
+    tabBtnArcade.addEventListener('click', () => switchMainTab('arcade'));
+  }
+
+  // 1. Quản lý Bảng Vàng Top 10
+  const leaderboardManager = new LeaderboardManager();
+
+  // 2. Khởi tạo Carousel & IntersectionObserver
+  const carouselEl = document.getElementById('gameCarousel');
+  const activeTitleEl = document.getElementById('activeGameTitle');
+
+  const carousel = new GameCarousel(carouselEl, (activeGameId) => {
+    if (activeTitleEl) {
+      activeTitleEl.innerText = `BẢNG VÀNG TOP 10: ${gameTitles[activeGameId] || activeGameId.toUpperCase()}`;
+    }
+    // Tự động tải Bảng Vàng của game đang nằm giữa màn hình
+    leaderboardManager.fetchTop10(activeGameId);
+  });
+
+  // Tải Bảng Vàng ban đầu (game jump)
+  leaderboardManager.fetchTop10('jump');
+
+  // Dot click navigation
+  document.querySelectorAll('.carousel-dot').forEach((dot) => {
+    dot.addEventListener('click', (e) => {
+      const gid = e.currentTarget.dataset.gameId;
+      if (gid) carousel.scrollToGame(gid);
+    });
+  });
+
+  // 3. Quản lý Arcade Viewport Modal & GameController (1 canvas duy nhất)
+  const arcadeModal = document.getElementById('arcadeModal');
+  const arcadeCanvas = document.getElementById('arcadeCanvas');
+  const modalGameName = document.getElementById('modalGameName');
+  const modalCurrentScore = document.getElementById('modalCurrentScore');
+  const closeArcadeBtn = document.getElementById('closeArcadeBtn');
+  const soundToggleBtn = document.getElementById('soundToggleBtn');
+  const controlsContainer = document.getElementById('gameControlsContainer');
+
+  const gameController = new GameController(arcadeCanvas, {
+    controlsContainer,
+    onScoreUpdate: (gameId, score) => {
+      if (modalCurrentScore) modalCurrentScore.innerText = score;
+    },
+    onGameOver: (gameId, score) => {
+      leaderboardManager.handleGameOverScore(gameId, score);
+    }
+  });
+
+  // Fullscreen Lock & Scroll Lock cho Mobile khi đang chơi game
+  let savedScrollY = 0;
+  const preventGameTouchMove = (e) => {
+    // Chặn hoàn toàn thao tác cuộn và bounce scroll trên màn hình chơi game
+    e.preventDefault();
+  };
+
+  const lockBodyScroll = () => {
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+
+    // Body CSS khóa cứng
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.touchAction = 'none';
+    document.body.style.overscrollBehavior = 'none';
+
+    // HTML / DocumentElement CSS khóa cứng và chặn gesture back
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = '100vh';
+    document.documentElement.style.position = 'fixed';
+    document.documentElement.style.width = '100%';
+    document.documentElement.style.touchAction = 'none';
+    document.documentElement.style.overscrollBehavior = 'none';
+    document.documentElement.style.overscrollBehaviorX = 'none';
+
+    if (arcadeModal) {
+      arcadeModal.addEventListener('touchmove', preventGameTouchMove, { passive: false });
+    }
+  };
+
+  const unlockBodyScroll = () => {
+    // Khôi phục lại trạng thái cuộn bình thường của trang web
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    document.body.style.top = '';
+    document.body.style.touchAction = '';
+    document.body.style.overscrollBehavior = '';
+
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.height = '';
+    document.documentElement.style.position = '';
+    document.documentElement.style.width = '';
+    document.documentElement.style.touchAction = '';
+    document.documentElement.style.overscrollBehavior = '';
+    document.documentElement.style.overscrollBehaviorX = '';
+
+    if (arcadeModal) {
+      arcadeModal.removeEventListener('touchmove', preventGameTouchMove);
+    }
+
+    window.scrollTo(0, savedScrollY);
+  };
+
+  // Mở game modal khi nhấn "CHƠI NGAY"
+  const openGame = (gameId) => {
+    if (!arcadeModal) return;
+    if (modalGameName) modalGameName.innerText = gameTitles[gameId] || gameId;
+    if (modalCurrentScore) modalCurrentScore.innerText = '0';
+
+    lockBodyScroll();
+
+    arcadeModal.classList.remove('hidden');
+    arcadeModal.classList.add('flex');
+
+    gameController.loadGame(gameId);
+    gameController.startCurrentGame();
+  };
+
+  // Event delegation cho nút CHƠI NGAY (hoạt động tốt với cả cards gốc và cloned cards)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.launch-game-btn');
+    if (btn) {
+      const gid = btn.dataset.gameId;
+      if (gid) openGame(gid);
+    }
+  });
+
+  // Đóng game modal
+  const closeGame = () => {
+    if (!arcadeModal) return;
+    arcadeModal.classList.add('hidden');
+    arcadeModal.classList.remove('flex');
+    gameController.destroy();
+    unlockBodyScroll();
+  };
+
+  if (closeArcadeBtn) {
+    closeArcadeBtn.addEventListener('click', closeGame);
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && arcadeModal && !arcadeModal.classList.contains('hidden')) {
+      closeGame();
+    }
+  });
+
+  // Nút bật/tắt âm thanh
+  if (soundToggleBtn) {
+    soundToggleBtn.innerText = soundEngine.isMuted() ? '🔇' : '🔊';
+    soundToggleBtn.addEventListener('click', () => {
+      const isMuted = soundEngine.toggleMute();
+      soundToggleBtn.innerText = isMuted ? '🔇' : '🔊';
+    });
+  }
+
+  // 4. Quản lý Danh mục Affiliate
+  const productsGrid = document.getElementById('productsGrid');
+  const categoryTabs = document.getElementById('categoryTabs');
+  new AffiliateManager(productsGrid, categoryTabs);
+
+  // 5. Quản lý Modal QR Donate
+  const donateModalEl = document.getElementById('donateModal');
+  const donateBtn = document.getElementById('donateBtn');
+  new DonateModalManager(donateModalEl, donateBtn);
+
+  const footerDonateLink = document.getElementById('footerDonateLink');
+  if (footerDonateLink && donateModalEl) {
+    footerDonateLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      donateModalEl.classList.remove('hidden');
+      donateModalEl.classList.add('flex');
+    });
+  }
+});
