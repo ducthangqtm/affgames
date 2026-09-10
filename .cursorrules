@@ -1,0 +1,48 @@
+# Cursor Rules for ThangNhayDay All-in-One Web App
+
+## 1. Project Architecture & Framework Rules
+- Framework: Vite Multi-page with Vanilla ES Modules (`index.html` and `admin.html`).
+- Backend: Cloudflare Pages Functions located in `/functions/api/`. Do NOT use Node server frameworks (e.g. Express).
+- Database: Cloudflare D1 SQL Database with SQLite syntax. Bind name is `env.DB`.
+- Styling: Cyberpunk / Neon Dark Mode using Tailwind CDN + custom rules in `src/styles/main.css` and `src/styles/admin.css`.
+
+## 2. Navigation & Tabs
+- The application has 2 primary tabs in `index.html`:
+  - Tab 1: "🛍️ ĐỒ TẬP & PHỤ KIỆN" (Active by default on open).
+  - Tab 2: "🎮 TRÒ CHƠI (ARCADE 4-IN-1)".
+- When switching to Tab 2 or refreshing, ALWAYS ensure the default game centered and active is "Thắng Nhảy Dây" (`jump`) via `carousel.resetToDefault()`.
+
+## 3. Mini-Games Architecture (4 Games)
+- All mini-games reside in `src/games/` and inherit from `BaseGame.js` (`init(canvas)`, `start()`, `pause()`, `destroy()`).
+- Coordinated solely through `GameController.js` rendering into a SINGLE shared canvas `#arcadeCanvas` inside `.arcade-cabinet-frame`.
+- When any game starts or modal is active, enforce Mobile Fullscreen Scroll Lock (`document.body.style.overflow = 'hidden'`, `touch-action: none`, and `touchmove` default prevented).
+- Game-specific requirements:
+  - `jump` (Thắng Nhảy Dây): Default game, has Weekly gift race (`week_id`) + All-Time records. Modal asks for optional Zalo contact.
+  - `snake` (Cyber Snake): Big 4-button D-Pad on mobile, wrap-around wall logic.
+  - `2048` (2048 Neon): NO on-screen buttons. Pure touch swipe control.
+  - `tetris` (Xếp Hình Neon): Ghost piece disabled. Only Left/Right buttons, Rotate button on far right, Hard Drop button in the center.
+
+## 4. Game Carousel (True Infinite Loop)
+- Located in `src/modules/carousel.js`.
+- MUST maintain 6 DOM cards: `[Clone Tetris (0)] - [1. Nhảy Dây] - [2. Rắn] - [3. 2048] - [4. Tetris] - [Clone Nhảy Dây (5)]`.
+- MUST NOT use `scroll-behavior: smooth` in `.carousel-container` CSS to avoid rewind lag.
+- When scroll ends on index 5: instantly teleport `scrollLeft` to index 1 with `behavior: 'auto'` / `'instant'` while temporarily disabling `scroll-snap-type`.
+- When scroll ends on index 0: instantly teleport `scrollLeft` to index 4.
+
+## 5. Leaderboard & Security
+- Managed via `functions/api/leaderboard.ts` and `src/modules/leaderboard.js`.
+- Public GET endpoint MUST NEVER return `pin_hash` or `contact_info`.
+- Only `type=admin_weekly` can expose `contact_info` and `pin_hash` to the admin portal.
+- All PINs are hashed using SHA-256 via Web Crypto API (`crypto.subtle.digest('SHA-256')`).
+- Only `jump` supports weekly prize racing. All other games (`snake`, `2048`, `tetris`) are strictly All-Time only.
+
+## 6. Admin Portal (/admin.html)
+- Main sub-navigation:
+  - Tab 1: "🛍️ Quản Trị Sản Phẩm Affiliate": Synchronizes `src/data/products.json` via GitHub REST API with Base64 encoding. Default repo is `ducthangqtm/affgames`.
+  - Tab 2: "🎁 Trao Giải Đua Top Tuần": Week selector (`week_id`), Top 1 Winner Card with Zalo chat link, and client-side SHA-256 PIN Verification tool ("Khớp PIN - Chính chủ" vs "Sai PIN").
+
+## 7. Donate Modal
+- Modal `#donateModal` must remain visual and clean:
+  - Display large centered VietQR MoMo image (`/assets/qr-donate.jpg`).
+  - DO NOT display plain text bank account or phone numbers.
+  - Prominent MoMo button linking to `https://me.momo.vn/0987654321` and a dismiss button.
