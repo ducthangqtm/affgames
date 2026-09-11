@@ -70,12 +70,24 @@ export async function onRequestGet(context) {
     let query = '';
     let params = [game_id];
 
-    // Lọc theo tuần (7 ngày gần nhất) hoặc all-time
+    // Lọc theo tuần (7 ngày gần nhất) hoặc all-time, mỗi player chỉ lấy điểm cao nhất
     if (type === 'weekly') {
-      query = "SELECT player_name, score, created_at FROM leaderboards WHERE game_id = ? AND created_at >= datetime('now', '-7 days') ORDER BY score DESC LIMIT 10";
+      query = `
+        SELECT player_name, MAX(score) as score, MAX(created_at) as created_at 
+        FROM leaderboards 
+        WHERE game_id = ? AND created_at >= datetime('now', '-7 days') 
+        GROUP BY player_name 
+        ORDER BY score DESC LIMIT 10
+      `;
     } else {
       // type === 'alltime' hoặc các giá trị khác
-      query = "SELECT player_name, score, created_at FROM leaderboards WHERE game_id = ? ORDER BY score DESC LIMIT 10";
+      query = `
+        SELECT player_name, MAX(score) as score, MAX(created_at) as created_at 
+        FROM leaderboards 
+        WHERE game_id = ? 
+        GROUP BY player_name 
+        ORDER BY score DESC LIMIT 10
+      `;
     }
 
     const { results } = await env.DB.prepare(query).bind(...params).all();
@@ -95,7 +107,7 @@ export async function onRequestGet(context) {
         success: true,
         game_id,
         type,
-        results: rows,
+        results: top10,
         top10,
         min_qualifying_score: top10.length < 10 ? 1 : top10[top10.length - 1].score
       }),
