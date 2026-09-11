@@ -1,0 +1,21 @@
+{
+  "name": "TiT - Thắng Nhảy Dây Bio & Arcade Games",
+  "short_name": "TiT",
+  "description": "Bio link tổng hợp đồ tập nhảy dây, phụ kiện thể thao chính hãng và cổng game Arcade giải trí Thắng Nhảy Dây",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "icons": [
+    {
+      "src": "/logo-tit.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo-tit.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
