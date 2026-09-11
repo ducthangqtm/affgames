@@ -101,12 +101,15 @@
 
       <!-- CỤM TIỆN ÍCH ĐẦU TRANG (Status & Share Button) -->
       <div class="top-utility-bar">
-        <!-- Nút Logo TiT (Góc trên bên trái) -->
-        <button id="titLogoBtn" class="tit-logo-btn" title="TiT - Về đầu trang" aria-label="TiT Logo">
-          <img src="/logo-tit.svg" alt="TiT Logo" class="w-full h-full object-contain" />
+        <!-- Nút Thanh Pill "Đang hoạt động" chứa Logo TiT (Góc trên bên trái) -->
+        <button id="titLogoBtn" class="status-pill-btn" title="TiT - Về đầu trang" aria-label="TiT - Đang hoạt động">
+          <span class="status-pill-logo">
+            <img src="/logo-tit.svg" alt="TiT Logo" class="w-full h-full object-contain pointer-events-none" />
+          </span>
+          <span class="status-pill-text">Đang hoạt động</span>
         </button>
 
-        <!-- Nút "Chia sẻ" -->
+        <!-- Nút "Chia sẻ" (Góc trên bên phải) -->
         <button id="shareBtn" class="share-btn" title="Chia sẻ trang" aria-label="Chia sẻ trang">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="18" cy="5" r="3"></circle>
@@ -118,17 +121,16 @@
         </button>
       </div>
 
-      <!-- Avatar -->
-      <div class="avatar-container" style="width: 110px; height: 110px; min-width: 110px; min-height: 110px; margin: 0 auto 12px auto; position: relative;">
-        <div class="profile-avatar" style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; border: 3px solid rgba(56, 189, 248, 0.85); box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; position: relative;">
+      <!-- Avatar Bio phóng to 120px nổi bật, viền phát sáng nhẹ glow neon -->
+      <div class="avatar-container">
+        <div class="profile-avatar">
           <img
             src="/assets/avatar.jpg"
             alt="Thắng Nhảy Dây"
-            style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 20%; transform: scale(1.15); display: block;"
           />
         </div>
-        <div class="avatar-badge" title="Xác minh chính chủ" style="position: absolute; right: 3px; bottom: 3px; width: 24px; height: 24px; background: #06b6d4; color: #020617; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); border: 2px solid #0f172a; z-index: 10;">
-          <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24">
+        <div class="avatar-badge" title="Xác minh chính chủ">
+          <svg viewBox="0 0 24 24">
             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
           </svg>
         </div>
