@@ -1,10 +1,11 @@
 // Cloudflare Pages Functions API: /api/leaderboard
 // Kết nối Cloudflare D1 Database binding: env.DB
 
-const corsHeaders = {
+const responseHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
   'Content-Type': 'application/json; charset=utf-8'
 };
 
@@ -12,7 +13,7 @@ const corsHeaders = {
 export async function onRequestOptions() {
   return new Response(null, {
     status: 204,
-    headers: corsHeaders
+    headers: responseHeaders
   });
 }
 
@@ -37,6 +38,7 @@ async function ensureLeaderboardsTable(db) {
   }
 }
 
+
 // 1. GET: Lấy Top 10 kỷ lục theo game_id và theo tuần/all-time
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -57,25 +59,15 @@ export async function onRequestGet(context) {
         success: true,
         game_id,
         type,
-        total_plays: 1250,
         results: mockResults,
         top10: mockResults.map((r, idx) => ({ ...r, rank: idx + 1, display_name: r.player_name }))
       }),
-      { headers: corsHeaders }
+      { status: 200, headers: responseHeaders }
     );
   }
 
   try {
     await ensureLeaderboardsTable(env.DB);
-
-    // Lấy tổng số lượt chơi thực tế từ D1
-    let total_plays = 0;
-    try {
-      const countRes = await env.DB.prepare("SELECT COUNT(*) as total FROM leaderboards").first();
-      total_plays = countRes ? (Number(countRes.total) || 0) : 0;
-    } catch (countErr) {
-      console.warn('Lỗi đếm tổng lượt chơi:', countErr);
-    }
 
     let query = '';
     let params = [game_id];
@@ -117,20 +109,19 @@ export async function onRequestGet(context) {
         success: true,
         game_id,
         type,
-        total_plays,
         results: top10,
         top10,
         min_qualifying_score: top10.length < 10 ? 1 : top10[top10.length - 1].score
       }),
       {
         status: 200,
-        headers: corsHeaders
+        headers: responseHeaders
       }
     );
   } catch (err) {
     return new Response(
       JSON.stringify({ success: false, error: err.message || 'Lỗi truy vấn Database' }),
-      { status: 500, headers: corsHeaders }
+      { status: 500, headers: responseHeaders }
     );
   }
 }
@@ -149,21 +140,21 @@ export async function onRequestPost(context) {
     if (!player_name || player_name.length === 0) {
       return new Response(
         JSON.stringify({ success: false, error: 'Tên người chơi không được để trống' }),
-        { status: 400, headers: corsHeaders }
+        { status: 400, headers: responseHeaders }
       );
     }
 
     if (isNaN(score) || score <= 0) {
       return new Response(
         JSON.stringify({ success: false, error: 'Điểm số phải lớn hơn 0' }),
-        { status: 400, headers: corsHeaders }
+        { status: 400, headers: responseHeaders }
       );
     }
 
     if (!env.DB) {
       return new Response(
         JSON.stringify({ success: true, message: 'Đã lưu điểm (mock mode)' }),
-        { status: 200, headers: corsHeaders }
+        { status: 200, headers: responseHeaders }
       );
     }
 
@@ -178,13 +169,13 @@ export async function onRequestPost(context) {
       JSON.stringify({ success: true }),
       {
         status: 200,
-        headers: corsHeaders
+        headers: responseHeaders
       }
     );
   } catch (err) {
     return new Response(
       JSON.stringify({ success: false, error: err.message || 'Lỗi server xử lý lưu điểm' }),
-      { status: 500, headers: corsHeaders }
+      { status: 500, headers: responseHeaders }
     );
   }
 }

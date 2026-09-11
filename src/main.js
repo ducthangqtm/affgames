@@ -95,16 +95,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Tải Bảng Vàng ban đầu (game jump)
   leaderboardManager.fetchTop10('jump');
 
-  // Lấy tổng lượt chơi ban đầu từ D1 (/api/stats)
-  fetch('/api/stats')
-    .then(res => res.json())
+  // Lấy tổng lượt chơi ban đầu từ D1 (/api/stats) kèm timestamp và no-store chống cache
+  fetch(`/api/stats?t=${Date.now()}`, { cache: 'no-store' })
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+      return res.json();
+    })
     .then(data => {
-      const countEl = document.getElementById('totalPlaysCount');
+      const countEl = document.querySelector('#totalPlaysCount');
       if (data && data.total_plays !== undefined && countEl) {
-        countEl.innerText = Number(data.total_plays).toLocaleString('en-US');
+        countEl.textContent = data.total_plays;
       }
     })
-    .catch(() => {});
+    .catch((err) => {
+      console.warn('Lỗi lấy tổng lượt chơi từ /api/stats:', err);
+    });
 
   // 3. Quản lý Arcade Viewport Modal & GameController (1 canvas duy nhất)
   const arcadeModal = document.getElementById('arcadeModal');
@@ -126,30 +131,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Bộ đếm Tổng lượt chơi áp dụng cho TẤT CẢ các game
-  const trackGamePlay = () => {
-    // 1. Tăng ngay con số trên banner #totalPlaysCount thêm +1 trên giao diện (Optimistic UI)
-    const countEl = document.getElementById('totalPlaysCount');
-    if (countEl) {
-      const currentVal = parseInt(countEl.innerText.replace(/[^0-9]/g, ''), 10) || 0;
-      countEl.innerText = (currentVal + 1).toLocaleString('en-US');
-    }
-
-    // 2. Gửi ngay 1 request ngầm fetch('/api/stats', { method: 'POST' }) để tăng total_plays trong D1
+  const trackGamePlay = (currentGameId = 'jump') => {
+    // Gửi ngay fetch POST /api/stats với body { game_id: currentGameId }
+    // Xóa bỏ hoàn toàn mọi biến tạm tự cộng số ảo trên frontend
     try {
       fetch('/api/stats', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ game_id: currentGameId })
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        return res.json();
+      })
       .then(data => {
-        if (data && data.total_plays !== undefined && countEl) {
-          countEl.innerText = Number(data.total_plays).toLocaleString('en-US');
+        const countEl = document.querySelector('#totalPlaysCount');
+        if (countEl && data && data.total_plays !== undefined) {
+          countEl.textContent = data.total_plays;
         }
       })
       .catch(err => {
-        console.warn('Lỗi ghi nhận lượt chơi ngầm:', err);
+        console.warn('Lỗi ghi nhận lượt chơi vào D1:', err);
       });
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Lỗi gọi API /api/stats:', e);
+    }
   };
 
   // Fullscreen Lock & Scroll Lock cho Mobile khi đang chơi game
@@ -216,8 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalGameName) modalGameName.innerText = gameTitles[gameId] || gameId;
     if (modalCurrentScore) modalCurrentScore.innerText = '0';
 
-    // Ghi nhận lượt chơi ngầm cho TẤT CẢ trò chơi
-    trackGamePlay();
+    // Ghi nhận lượt chơi cho game tương ứng
+    trackGamePlay(gameId);
 
     lockBodyScroll();
 
