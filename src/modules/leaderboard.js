@@ -191,6 +191,9 @@ export class LeaderboardManager {
     const cachedData = leaderboardCache[cacheKey];
 
     if (!forceRefresh && cachedData) {
+      if (cachedData.total_plays !== undefined && cachedData.total_plays !== null) {
+        this.updateTotalPlaysUI(cachedData.total_plays);
+      }
       this.renderLeaderboard(cachedData);
       return cachedData;
     }
@@ -204,10 +207,15 @@ export class LeaderboardManager {
       const data = await res.json();
       if (data && (data.top10 || data.results)) {
         const top10 = data.top10 || data.results || [];
+        const totalPlays = data.total_plays !== undefined ? Number(data.total_plays) : null;
+        if (totalPlays !== null) {
+          this.updateTotalPlaysUI(totalPlays);
+        }
         const formattedData = {
           success: true,
           game_id: gameId,
           type: effectiveType,
+          total_plays: totalPlays,
           top10
         };
         leaderboardCache[cacheKey] = formattedData;
@@ -224,11 +232,20 @@ export class LeaderboardManager {
         success: true,
         game_id: gameId,
         type: effectiveType,
+        total_plays: 1250,
         top10: fallbackList
       };
+      this.updateTotalPlaysUI(1250);
       leaderboardCache[cacheKey] = fallbackData;
       this.renderLeaderboard(fallbackData);
       return fallbackData;
+    }
+  }
+
+  updateTotalPlaysUI(totalPlays) {
+    const el = document.getElementById('totalPlaysCount');
+    if (el && totalPlays !== undefined && totalPlays !== null) {
+      el.innerText = Number(totalPlays).toLocaleString('en-US');
     }
   }
 

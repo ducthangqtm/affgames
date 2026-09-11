@@ -863,4 +863,63 @@ body {
   line-height: 1.5 !important;
 }
 
+/* ==========================================================================
+   TOTAL PLAYS BANNER (Arcade Tab)
+   ========================================================================== */
+.total-plays-banner {
+  width: 100%;
+  padding: 9px 16px;
+  border-radius: 13px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.15), inset 0 0 12px rgba(245, 158, 11, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  user-select: none;
+  transition: all 0.3s ease;
+  animation: bannerGlowPulse 3s infinite alternate ease-in-out;
+}
 
+@keyframes bannerGlowPulse {
+  0% {
+    border-color: rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.12);
+  }
+  100% {
+    border-color: rgba(251, 191, 36, 0.55);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+  }
+}
+
+.total-plays-icon {
+  font-size: 14px;
+  display: inline-block;
+  animation: flameBounce 1.8s infinite ease-in-out;
+}
+
+@keyframes flameBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.15); }
+}
+
+.total-plays-text {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+  letter-spacing: 0.01em;
+}
+
+.total-plays-number {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 800;
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+  margin: 0 4px;
+  font-size: 14px;
+}

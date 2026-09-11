@@ -57,6 +57,7 @@ export async function onRequestGet(context) {
         success: true,
         game_id,
         type,
+        total_plays: 1250,
         results: mockResults,
         top10: mockResults.map((r, idx) => ({ ...r, rank: idx + 1, display_name: r.player_name }))
       }),
@@ -66,6 +67,15 @@ export async function onRequestGet(context) {
 
   try {
     await ensureLeaderboardsTable(env.DB);
+
+    // Lấy tổng số lượt chơi thực tế từ D1
+    let total_plays = 0;
+    try {
+      const countRes = await env.DB.prepare("SELECT COUNT(*) as total FROM leaderboards").first();
+      total_plays = countRes ? (Number(countRes.total) || 0) : 0;
+    } catch (countErr) {
+      console.warn('Lỗi đếm tổng lượt chơi:', countErr);
+    }
 
     let query = '';
     let params = [game_id];
@@ -107,6 +117,7 @@ export async function onRequestGet(context) {
         success: true,
         game_id,
         type,
+        total_plays,
         results: top10,
         top10,
         min_qualifying_score: top10.length < 10 ? 1 : top10[top10.length - 1].score
