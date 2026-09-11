@@ -34,3 +34,11 @@ CREATE TABLE IF NOT EXISTS leaderboards (
 
 CREATE INDEX IF NOT EXISTS idx_leaderboards_game_score ON leaderboards(game_id, score DESC);
 CREATE INDEX IF NOT EXISTS idx_leaderboards_game_created ON leaderboards(game_id, created_at DESC);
+
+-- Bảng lưu trữ thống kê tổng (total_plays...)
+CREATE TABLE IF NOT EXISTS game_stats (
+  key TEXT PRIMARY KEY,
+  value INTEGER NOT NULL DEFAULT 0,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+

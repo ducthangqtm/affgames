@@ -95,6 +95,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Tải Bảng Vàng ban đầu (game jump)
   leaderboardManager.fetchTop10('jump');
 
+  // Lấy tổng lượt chơi ban đầu từ D1 (/api/stats)
+  fetch('/api/stats')
+    .then(res => res.json())
+    .then(data => {
+      const countEl = document.getElementById('totalPlaysCount');
+      if (data && data.total_plays !== undefined && countEl) {
+        countEl.innerText = Number(data.total_plays).toLocaleString('en-US');
+      }
+    })
+    .catch(() => {});
+
   // 3. Quản lý Arcade Viewport Modal & GameController (1 canvas duy nhất)
   const arcadeModal = document.getElementById('arcadeModal');
   const arcadeCanvas = document.getElementById('arcadeCanvas');
@@ -113,6 +124,33 @@ document.addEventListener('DOMContentLoaded', () => {
       leaderboardManager.handleGameOverScore(gameId, score);
     }
   });
+
+  // Bộ đếm Tổng lượt chơi áp dụng cho TẤT CẢ các game
+  const trackGamePlay = () => {
+    // 1. Tăng ngay con số trên banner #totalPlaysCount thêm +1 trên giao diện (Optimistic UI)
+    const countEl = document.getElementById('totalPlaysCount');
+    if (countEl) {
+      const currentVal = parseInt(countEl.innerText.replace(/[^0-9]/g, ''), 10) || 0;
+      countEl.innerText = (currentVal + 1).toLocaleString('en-US');
+    }
+
+    // 2. Gửi ngay 1 request ngầm fetch('/api/stats', { method: 'POST' }) để tăng total_plays trong D1
+    try {
+      fetch('/api/stats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.total_plays !== undefined && countEl) {
+          countEl.innerText = Number(data.total_plays).toLocaleString('en-US');
+        }
+      })
+      .catch(err => {
+        console.warn('Lỗi ghi nhận lượt chơi ngầm:', err);
+      });
+    } catch (e) {}
+  };
 
   // Fullscreen Lock & Scroll Lock cho Mobile khi đang chơi game
   let savedScrollY = 0;
@@ -177,6 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!arcadeModal) return;
     if (modalGameName) modalGameName.innerText = gameTitles[gameId] || gameId;
     if (modalCurrentScore) modalCurrentScore.innerText = '0';
+
+    // Ghi nhận lượt chơi ngầm cho TẤT CẢ trò chơi
+    trackGamePlay();
 
     lockBodyScroll();
 
