@@ -923,3 +923,44 @@ body {
   margin: 0 4px;
   font-size: 14px;
 }
+
+/* ==========================================================================
+   GAME OVER OVERLAY ACTION BUTTONS
+   ========================================================================== */
+.btn-game-replay {
+  background: linear-gradient(135deg, #22c55e 0%, #84cc16 45%, #eab308 100%);
+  color: #03150b !important;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.45), 0 0 10px rgba(234, 179, 8, 0.35);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+  font-weight: 900;
+}
+
+.btn-game-replay:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 26px rgba(34, 197, 94, 0.65), 0 0 14px rgba(234, 179, 8, 0.45);
+}
+
+.btn-game-replay:active {
+  transform: scale(0.95);
+}
+
+.btn-game-home {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  font-weight: 700;
+}
+
+.btn-game-home:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff !important;
+  border-color: rgba(0, 242, 254, 0.45);
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.25);
+}
+
+.btn-game-home:active {
+  transform: scale(0.95);
+}

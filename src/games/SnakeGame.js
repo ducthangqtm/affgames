@@ -50,7 +50,16 @@ export class SnakeGame extends BaseGame {
         this.nextDx = 1; this.nextDy = 0;
       }
 
-      if ((this.state === 'IDLE' || this.state === 'START' || this.state === 'GAMEOVER') &&
+      if (this.state === 'GAMEOVER' && e.code === 'Space') {
+        this.removeGameOverOverlay();
+        this.start();
+        if (this.onPlayAgainCallback) {
+          this.onPlayAgainCallback();
+        }
+        return;
+      }
+
+      if ((this.state === 'IDLE' || this.state === 'START') &&
           ['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'KeyS', 'KeyA', 'KeyD'].includes(e.code)) {
         this.start();
       }
@@ -65,7 +74,7 @@ export class SnakeGame extends BaseGame {
       if (e.touches.length !== 1) return;
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
-      if (this.state === 'IDLE' || this.state === 'START' || this.state === 'GAMEOVER') {
+      if (this.state === 'IDLE' || this.state === 'START') {
         this.start();
       }
     };
@@ -95,7 +104,7 @@ export class SnakeGame extends BaseGame {
   }
 
   setDirection(ndx, ndy) {
-    if (this.state === 'IDLE' || this.state === 'START' || this.state === 'GAMEOVER') {
+    if (this.state === 'IDLE' || this.state === 'START') {
       this.start();
     }
     if (ndx !== 0 && this.dx === 0) {
@@ -137,6 +146,7 @@ export class SnakeGame extends BaseGame {
   }
 
   start() {
+    this.removeGameOverOverlay();
     this.snake = [
       { x: 8, y: 8 },
       { x: 8, y: 9 },
@@ -190,6 +200,12 @@ export class SnakeGame extends BaseGame {
         localStorage.setItem('snake_high_score', this.highScore);
       }
       this.triggerGameOver(this.score);
+      this.showGameOverOverlay({
+        title: 'GAME OVER!',
+        score: this.score,
+        highScore: this.highScore,
+        subtitle: 'Rắn đã va chạm thân mình'
+      });
       return;
     }
 
@@ -285,16 +301,6 @@ export class SnakeGame extends BaseGame {
     } else if (this.state === 'GAMEOVER') {
       this.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
       this.ctx.fillRect(0, 0, w, h);
-      this.ctx.fillStyle = '#f43f5e';
-      this.ctx.font = 'bold 22px sans-serif';
-      this.ctx.textAlign = 'center';
-      this.ctx.fillText('GAME OVER!', w / 2, h / 2 - 20);
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.font = 'bold 15px sans-serif';
-      this.ctx.fillText(`Điểm: ${this.score}  |  Kỷ lục: ${this.highScore}`, w / 2, h / 2 + 8);
-      this.ctx.fillStyle = '#39ff14';
-      this.ctx.font = 'bold 13px sans-serif';
-      this.ctx.fillText('Chạm màn hình để chơi lại', w / 2, h / 2 + 38);
     }
   }
 

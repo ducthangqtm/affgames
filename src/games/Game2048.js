@@ -44,7 +44,11 @@ export class Game2048 extends BaseGame {
       else if (['ArrowRight', 'KeyD'].includes(e.code)) { e.preventDefault(); this.move('RIGHT'); }
 
       if (this.state === 'GAMEOVER' && e.code === 'Space') {
+        this.removeGameOverOverlay();
         this.start();
+        if (this.onPlayAgainCallback) {
+          this.onPlayAgainCallback();
+        }
       }
     };
     this.addListener(window, 'keydown', handleKeyDown);
@@ -132,6 +136,7 @@ export class Game2048 extends BaseGame {
   }
 
   start() {
+    this.removeGameOverOverlay();
     this.state = 'PLAYING';
     this.resetGrid();
     this.draw();
@@ -231,6 +236,12 @@ export class Game2048 extends BaseGame {
     this.state = 'GAMEOVER';
     soundEngine.playTrip();
     this.triggerGameOver(this.score);
+    this.showGameOverOverlay({
+      title: 'HẾT NƯỚC ĐI!',
+      score: this.score,
+      highScore: this.highScore,
+      subtitle: 'Không còn nước đi nào khả dụng'
+    });
     this.draw();
   }
 
@@ -344,16 +355,6 @@ export class Game2048 extends BaseGame {
     } else if (this.state === 'GAMEOVER') {
       this.ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
       this.ctx.fillRect(0, 0, w, h);
-      this.ctx.fillStyle = '#f43f5e';
-      this.ctx.font = 'bold 24px sans-serif';
-      this.ctx.textAlign = 'center';
-      this.ctx.fillText('HẾT NƯỚC ĐI!', w / 2, h / 2 - 25);
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.font = 'bold 15px sans-serif';
-      this.ctx.fillText(`Điểm: ${this.score}  |  Kỷ lục: ${this.highScore}`, w / 2, h / 2 + 5);
-      this.ctx.fillStyle = '#38bdf8';
-      this.ctx.font = 'bold 13px sans-serif';
-      this.ctx.fillText('Chạm để chơi ván mới', w / 2, h / 2 + 38);
     }
   }
 

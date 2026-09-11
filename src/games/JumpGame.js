@@ -397,7 +397,7 @@ export class JumpGame extends BaseGame {
 
     const handleAction = (e) => {
       // Bỏ qua nếu chạm vào nút đóng game, nút âm thanh, Start Overlay hoặc map selector
-      if (e.target.closest('#closeArcadeBtn, #soundToggleBtn, .ui-modal, .ui-interactive, button, a, #jumpStartOverlay, .map-selector-btn, .bg-selector-btn, .map-selector')) return;
+      if (e.target.closest('#closeArcadeBtn, #soundToggleBtn, .ui-modal, .ui-interactive, button, a, #jumpStartOverlay, .map-selector-btn, .bg-selector-btn, .map-selector, .game-over-overlay')) return;
 
       if (this.state === 'START') {
         return;
@@ -407,8 +407,6 @@ export class JumpGame extends BaseGame {
         this.start();
       } else if (this.state === 'PLAYING') {
         this.jump();
-      } else if (this.state === 'GAMEOVER' && this.canRestart) {
-        this.start();
       }
     };
 
@@ -429,6 +427,19 @@ export class JumpGame extends BaseGame {
           return;
         }
       }
+
+      if (this.state === 'GAMEOVER') {
+        if (e.code === 'Space' && this.canRestart) {
+          e.preventDefault();
+          this.removeGameOverOverlay();
+          this.start();
+          if (this.onPlayAgainCallback) {
+            this.onPlayAgainCallback();
+          }
+        }
+        return;
+      }
+
       if (e.code === 'Space' || e.code === 'ArrowUp') {
         e.preventDefault();
         handleAction(e);
@@ -561,6 +572,7 @@ export class JumpGame extends BaseGame {
 
   start() {
     this.removeStartOverlay();
+    this.removeGameOverOverlay();
     this.state = 'PLAYING';
     this.score = 0;
     this.combo = 0;
@@ -594,6 +606,12 @@ export class JumpGame extends BaseGame {
     }
 
     this.triggerGameOver(this.score);
+    this.showGameOverOverlay({
+      title: 'VẤP DÂY RỒI!',
+      score: this.score,
+      highScore: this.highScore,
+      subtitle: this.getTitle(this.score)
+    });
 
     setTimeout(() => {
       this.canRestart = true;
@@ -1241,26 +1259,6 @@ export class JumpGame extends BaseGame {
     this.ctx.save();
     this.ctx.fillStyle = 'rgba(5, 8, 20, 0.8)';
     this.ctx.fillRect(0, 0, w, h);
-
-    this.ctx.fillStyle = '#f43f5e';
-    this.ctx.shadowColor = '#f43f5e';
-    this.ctx.shadowBlur = 15;
-    this.ctx.font = `bold 24px ${VIETNAMESE_FONT}`;
-    this.ctx.textAlign = 'center';
-    this.ctx.fillText('VẤP DÂY RỒI!', w / 2, h / 2 - 40);
-
-    this.ctx.shadowBlur = 0;
-    this.ctx.fillStyle = '#ffffff';
-    this.ctx.font = `bold 16px ${VIETNAMESE_FONT}`;
-    this.ctx.fillText(`Điểm: ${this.score}  |  Kỷ lục: ${this.highScore}`, w / 2, h / 2 - 10);
-
-    this.ctx.fillStyle = '#facc15';
-    this.ctx.font = `13px ${VIETNAMESE_FONT}`;
-    this.ctx.fillText(this.getTitle(this.score), w / 2, h / 2 + 16);
-
-    this.ctx.fillStyle = '#39ff14';
-    this.ctx.font = `bold 14px ${VIETNAMESE_FONT}`;
-    this.ctx.fillText('Chạm màn hình để nhảy tiếp', w / 2, h / 2 + 50);
     this.ctx.restore();
   }
 

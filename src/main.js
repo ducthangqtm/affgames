@@ -127,6 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     onGameOver: (gameId, score) => {
       leaderboardManager.handleGameOverScore(gameId, score);
+    },
+    onPlayAgain: (gameId) => {
+      trackGamePlay(gameId);
+    },
+    onGoHome: () => {
+      closeGame();
     }
   });
 
@@ -247,13 +253,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Đóng game modal
-  const closeGame = () => {
+  function closeGame() {
     if (!arcadeModal) return;
     arcadeModal.classList.add('hidden');
     arcadeModal.classList.remove('flex');
-    gameController.destroy();
+    if (gameController) {
+      gameController.destroy();
+    }
     unlockBodyScroll();
-  };
+  }
 
   if (closeArcadeBtn) {
     closeArcadeBtn.addEventListener('click', closeGame);

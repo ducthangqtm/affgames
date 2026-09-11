@@ -11,6 +11,8 @@ export class GameController {
     this.currentGameId = null;
     this.onGameOverCallback = options.onGameOver || null;
     this.onScoreUpdate = options.onScoreUpdate || null;
+    this.onPlayAgain = options.onPlayAgain || null;
+    this.onGoHome = options.onGoHome || null;
     this.controlsContainer = options.controlsContainer || null;
 
     this.gameMap = {
@@ -58,6 +60,16 @@ export class GameController {
       onScoreUpdate: (score) => {
         if (this.onScoreUpdate) {
           this.onScoreUpdate(gameId, score);
+        }
+      },
+      onPlayAgain: () => {
+        if (this.onPlayAgain) {
+          this.onPlayAgain(gameId);
+        }
+      },
+      onGoHome: () => {
+        if (this.onGoHome) {
+          this.onGoHome();
         }
       }
     });

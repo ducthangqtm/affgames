@@ -124,7 +124,13 @@ export class TetrisGame extends BaseGame {
         e.preventDefault();
         if (this.state === 'PAUSED') {
           this.togglePause();
-        } else if (this.state === 'IDLE' || this.state === 'START' || this.state === 'GAMEOVER') {
+        } else if (this.state === 'GAMEOVER') {
+          this.removeGameOverOverlay();
+          this.start();
+          if (this.onPlayAgainCallback) {
+            this.onPlayAgainCallback();
+          }
+        } else if (this.state === 'IDLE' || this.state === 'START') {
           this.start();
         } else if (this.state === 'PLAYING') {
           this.hardDrop();
@@ -161,7 +167,7 @@ export class TetrisGame extends BaseGame {
         return;
       }
 
-      if (this.state === 'IDLE' || this.state === 'START' || this.state === 'GAMEOVER') {
+      if (this.state === 'IDLE' || this.state === 'START') {
         this.start();
         return;
       }
@@ -222,7 +228,7 @@ export class TetrisGame extends BaseGame {
         return;
       }
 
-      if (this.state === 'IDLE' || this.state === 'START' || this.state === 'GAMEOVER') {
+      if (this.state === 'IDLE' || this.state === 'START') {
         this.start();
       }
     };
@@ -344,6 +350,7 @@ export class TetrisGame extends BaseGame {
   }
 
   start() {
+    this.removeGameOverOverlay();
     this.grid = this.createGrid();
     this.bag = [];
     this.score = 0;
@@ -593,6 +600,12 @@ export class TetrisGame extends BaseGame {
       localStorage.setItem('tetris_high_score', this.highScore);
     }
     this.triggerGameOver(this.score);
+    this.showGameOverOverlay({
+      title: 'GAME OVER!',
+      score: this.score,
+      highScore: this.highScore,
+      subtitle: `Cấp độ: ${this.level} • Số hàng đã xóa: ${this.lines}`
+    });
   }
 
   draw() {
@@ -845,16 +858,6 @@ export class TetrisGame extends BaseGame {
     } else if (this.state === 'GAMEOVER') {
       this.ctx.fillStyle = 'rgba(10, 13, 24, 0.85)';
       this.ctx.fillRect(0, 0, bw, bh);
-      this.ctx.fillStyle = '#f43f5e';
-      this.ctx.font = 'bold 20px sans-serif';
-      this.ctx.textAlign = 'center';
-      this.ctx.fillText('GAME OVER!', bw / 2, bh / 2 - 20);
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.font = 'bold 14px sans-serif';
-      this.ctx.fillText(`Điểm: ${this.score}  •  Cấp: ${this.level}`, bw / 2, bh / 2 + 8);
-      this.ctx.fillStyle = '#00f0ff';
-      this.ctx.font = 'bold 12px sans-serif';
-      this.ctx.fillText('Chạm để chơi lại', bw / 2, bh / 2 + 35);
     }
   }
 
