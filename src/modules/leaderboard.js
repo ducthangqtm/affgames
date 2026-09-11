@@ -1,6 +1,6 @@
 /**
  * Leaderboard Module: Đồng bộ Bảng Vàng Cloudflare D1, Cache cục bộ, Pop-up Top 10
- * Hỗ trợ Fallback tự động đọc/ghi vào localStorage khi chạy Dev / Test
+ * Kết nối Cloudflare Pages Functions API: /api/leaderboard
  */
 
 // Bộ đệm Cache Bảng Vàng Client In-Memory (Top 10 của 4 game)
@@ -11,115 +11,59 @@ export class LeaderboardManager {
     this.cache = new Map(); // `${gameId}_${type}` -> { data, timestamp }
     this.cacheTTL = 60 * 1000; // 60 giây
     this.activeGameId = 'jump';
-    this.currentType = 'weekly'; // 'weekly' | 'all_time'
-    this.qualifyingScores = new Map(); // `${gameId}_${type}` -> minScore
+    this.currentType = 'weekly'; // 'weekly' | 'alltime'
+    this.qualifyingScores = new Map();
     this.modalEl = document.getElementById('nameModal');
     this.pendingScoreSubmission = null;
 
-    // Dữ liệu mẫu phong phú cho cả Tuần này và Kỷ lục All-Time
+    // Dữ liệu mẫu dự phòng khi chưa kết nối mạng
     this.defaultMockScores = {
       weekly: {
         jump: [
-          { rank: 1, display_name: "Pro_Skipper", score: 95, updated_at: "2026-09-08" },
-          { rank: 2, display_name: "Thắng Nhảy Dây", score: 88, updated_at: "2026-09-09" },
-          { rank: 3, display_name: "SpeedHop", score: 64, updated_at: "2026-09-10" },
-          { rank: 4, display_name: "HànhLangMaster", score: 52, updated_at: "2026-09-08" },
-          { rank: 5, display_name: "MinhNhảy", score: 41, updated_at: "2026-09-09" },
-          { rank: 6, display_name: "DungDo", score: 32, updated_at: "2026-09-08" },
-          { rank: 7, display_name: "Tuấn1m5", score: 25, updated_at: "2026-09-09" },
-          { rank: 8, display_name: "HàRope", score: 18, updated_at: "2026-09-10" },
-          { rank: 9, display_name: "LinhJump", score: 14, updated_at: "2026-09-10" },
-          { rank: 10, display_name: "LongTậpSự", score: 8, updated_at: "2026-09-10" }
+          { rank: 1, player_name: "Pro_Skipper", display_name: "Pro_Skipper", score: 95, created_at: "2026-09-08" },
+          { rank: 2, player_name: "Thắng Nhảy Dây", display_name: "Thắng Nhảy Dây", score: 88, created_at: "2026-09-09" },
+          { rank: 3, player_name: "SpeedHop", display_name: "SpeedHop", score: 64, created_at: "2026-09-10" },
+          { rank: 4, player_name: "HànhLangMaster", display_name: "HànhLangMaster", score: 52, created_at: "2026-09-08" },
+          { rank: 5, player_name: "MinhNhảy", display_name: "MinhNhảy", score: 41, created_at: "2026-09-09" }
         ],
         snake: [
-          { rank: 1, display_name: "NeonSnake", score: 410, updated_at: "2026-09-08" },
-          { rank: 2, display_name: "CyberViper", score: 360, updated_at: "2026-09-09" },
-          { rank: 3, display_name: "Thắng Nhảy Dây", score: 270, updated_at: "2026-09-10" },
-          { rank: 4, display_name: "GreenPython", score: 210, updated_at: "2026-09-08" },
-          { rank: 5, display_name: "FastCrawler", score: 160, updated_at: "2026-09-09" },
-          { rank: 6, display_name: "RetroGamer", score: 130, updated_at: "2026-09-08" },
-          { rank: 7, display_name: "ByteBite", score: 95, updated_at: "2026-09-09" },
-          { rank: 8, display_name: "PixelHunt", score: 70, updated_at: "2026-09-10" },
-          { rank: 9, display_name: "SpeedSlither", score: 55, updated_at: "2026-09-10" },
-          { rank: 10, display_name: "NeoNoob", score: 30, updated_at: "2026-09-10" }
+          { rank: 1, player_name: "NeonSnake", display_name: "NeonSnake", score: 410, created_at: "2026-09-08" },
+          { rank: 2, player_name: "CyberViper", display_name: "CyberViper", score: 360, created_at: "2026-09-09" },
+          { rank: 3, player_name: "Thắng Nhảy Dây", display_name: "Thắng Nhảy Dây", score: 270, created_at: "2026-09-10" }
         ],
         '2048': [
-          { rank: 1, display_name: "QuickMerge", score: 8192, updated_at: "2026-09-08" },
-          { rank: 2, display_name: "NeonMaster", score: 8192, updated_at: "2026-09-09" },
-          { rank: 3, display_name: "Thắng Nhảy Dây", score: 4096, updated_at: "2026-09-10" },
-          { rank: 4, display_name: "TileStacker", score: 2048, updated_at: "2026-09-08" },
-          { rank: 5, display_name: "GridChamp", score: 1024, updated_at: "2026-09-09" },
-          { rank: 6, display_name: "SwipeHero", score: 512, updated_at: "2026-09-08" },
-          { rank: 7, display_name: "NeonBrain", score: 256, updated_at: "2026-09-09" },
-          { rank: 8, display_name: "BlockCombo", score: 128, updated_at: "2026-09-10" },
-          { rank: 9, display_name: "SlideKing", score: 64, updated_at: "2026-09-10" },
-          { rank: 10, display_name: "NumberFan", score: 32, updated_at: "2026-09-10" }
+          { rank: 1, player_name: "QuickMerge", display_name: "QuickMerge", score: 8192, created_at: "2026-09-08" },
+          { rank: 2, player_name: "NeonMaster", display_name: "NeonMaster", score: 8192, created_at: "2026-09-09" },
+          { rank: 3, player_name: "Thắng Nhảy Dây", display_name: "Thắng Nhảy Dây", score: 4096, created_at: "2026-09-10" }
         ],
         tetris: [
-          { rank: 1, display_name: "TetrisPro", score: 7100, updated_at: "2026-09-08" },
-          { rank: 2, display_name: "BlockKing", score: 6800, updated_at: "2026-09-09" },
-          { rank: 3, display_name: "Thắng Nhảy Dây", score: 5200, updated_at: "2026-09-10" },
-          { rank: 4, display_name: "MatrixDrop", score: 3900, updated_at: "2026-09-08" },
-          { rank: 5, display_name: "LineClearer", score: 2600, updated_at: "2026-09-09" },
-          { rank: 6, display_name: "NeonBricks", score: 1900, updated_at: "2026-09-08" },
-          { rank: 7, display_name: "CyberStack", score: 1400, updated_at: "2026-09-09" },
-          { rank: 8, display_name: "RetroBlock", score: 950, updated_at: "2026-09-10" },
-          { rank: 9, display_name: "HardDropper", score: 700, updated_at: "2026-09-10" },
-          { rank: 10, display_name: "TetrisNovice", score: 450, updated_at: "2026-09-10" }
+          { rank: 1, player_name: "TetrisPro", display_name: "TetrisPro", score: 7100, created_at: "2026-09-08" },
+          { rank: 2, player_name: "BlockKing", display_name: "BlockKing", score: 6800, created_at: "2026-09-09" },
+          { rank: 3, player_name: "Thắng Nhảy Dây", display_name: "Thắng Nhảy Dây", score: 5200, created_at: "2026-09-10" }
         ]
       },
-      all_time: {
+      alltime: {
         jump: [
-          { rank: 1, display_name: "Thắng Nhảy Dây", score: 108, updated_at: "2026-09-01" },
-          { rank: 2, display_name: "Pro_Skipper", score: 95, updated_at: "2026-09-02" },
-          { rank: 3, display_name: "HànhLangMaster", score: 72, updated_at: "2026-09-03" },
-          { rank: 4, display_name: "SpeedHop", score: 64, updated_at: "2026-09-04" },
-          { rank: 5, display_name: "MinhNhảy", score: 42, updated_at: "2026-09-05" },
-          { rank: 6, display_name: "DungDo", score: 35, updated_at: "2026-09-06" },
-          { rank: 7, display_name: "HàRope", score: 28, updated_at: "2026-09-07" },
-          { rank: 8, display_name: "Tuấn1m5", score: 25, updated_at: "2026-09-08" },
-          { rank: 9, display_name: "LinhJump", score: 16, updated_at: "2026-09-09" },
-          { rank: 10, display_name: "LongTậpSự", score: 10, updated_at: "2026-09-10" }
+          { rank: 1, player_name: "Thắng Nhảy Dây", display_name: "Thắng Nhảy Dây", score: 108, created_at: "2026-09-01" },
+          { rank: 2, player_name: "Pro_Skipper", display_name: "Pro_Skipper", score: 95, created_at: "2026-09-02" },
+          { rank: 3, player_name: "HànhLangMaster", display_name: "HànhLangMaster", score: 72, created_at: "2026-09-03" }
         ],
         snake: [
-          { rank: 1, display_name: "CyberViper", score: 450, updated_at: "2026-09-01" },
-          { rank: 2, display_name: "NeonSnake", score: 410, updated_at: "2026-09-02" },
-          { rank: 3, display_name: "Thắng Nhảy Dây", score: 290, updated_at: "2026-09-03" },
-          { rank: 4, display_name: "GreenPython", score: 240, updated_at: "2026-09-04" },
-          { rank: 5, display_name: "RetroGamer", score: 190, updated_at: "2026-09-05" },
-          { rank: 6, display_name: "FastCrawler", score: 160, updated_at: "2026-09-06" },
-          { rank: 7, display_name: "ByteBite", score: 120, updated_at: "2026-09-07" },
-          { rank: 8, display_name: "PixelHunt", score: 90, updated_at: "2026-09-08" },
-          { rank: 9, display_name: "SpeedSlither", score: 70, updated_at: "2026-09-09" },
-          { rank: 10, display_name: "NeoNoob", score: 40, updated_at: "2026-09-10" }
+          { rank: 1, player_name: "CyberViper", display_name: "CyberViper", score: 450, created_at: "2026-09-01" },
+          { rank: 2, player_name: "NeonSnake", display_name: "NeonSnake", score: 410, created_at: "2026-09-02" }
         ],
         '2048': [
-          { rank: 1, display_name: "NeonMaster", score: 16384, updated_at: "2026-09-01" },
-          { rank: 2, display_name: "QuickMerge", score: 8192, updated_at: "2026-09-02" },
-          { rank: 3, display_name: "Thắng Nhảy Dây", score: 4096, updated_at: "2026-09-03" },
-          { rank: 4, display_name: "TileStacker", score: 2048, updated_at: "2026-09-04" },
-          { rank: 5, display_name: "GridChamp", score: 1024, updated_at: "2026-09-05" },
-          { rank: 6, display_name: "SwipeHero", score: 512, updated_at: "2026-09-06" },
-          { rank: 7, display_name: "NeonBrain", score: 256, updated_at: "2026-09-07" },
-          { rank: 8, display_name: "BlockCombo", score: 128, updated_at: "2026-09-08" },
-          { rank: 9, display_name: "SlideKing", score: 64, updated_at: "2026-09-09" },
-          { rank: 10, display_name: "NumberFan", score: 32, updated_at: "2026-09-10" }
+          { rank: 1, player_name: "NeonMaster", display_name: "NeonMaster", score: 16384, created_at: "2026-09-01" },
+          { rank: 2, player_name: "QuickMerge", display_name: "QuickMerge", score: 8192, created_at: "2026-09-02" }
         ],
         tetris: [
-          { rank: 1, display_name: "BlockKing", score: 8400, updated_at: "2026-09-01" },
-          { rank: 2, display_name: "TetrisPro", score: 7100, updated_at: "2026-09-02" },
-          { rank: 3, display_name: "Thắng Nhảy Dây", score: 5200, updated_at: "2026-09-03" },
-          { rank: 4, display_name: "MatrixDrop", score: 3900, updated_at: "2026-09-04" },
-          { rank: 5, display_name: "LineClearer", score: 2800, updated_at: "2026-09-05" },
-          { rank: 6, display_name: "NeonBricks", score: 2100, updated_at: "2026-09-06" },
-          { rank: 7, display_name: "CyberStack", score: 1500, updated_at: "2026-09-07" },
-          { rank: 8, display_name: "RetroBlock", score: 1100, updated_at: "2026-09-08" },
-          { rank: 9, display_name: "HardDropper", score: 800, updated_at: "2026-09-09" },
-          { rank: 10, display_name: "TetrisNovice", score: 500, updated_at: "2026-09-10" }
+          { rank: 1, player_name: "BlockKing", display_name: "BlockKing", score: 8400, created_at: "2026-09-01" },
+          { rank: 2, player_name: "TetrisPro", display_name: "TetrisPro", score: 7100, created_at: "2026-09-02" }
         ]
       }
     };
 
+    window.leaderboardManagerInstance = this;
     this.initTabs();
     this.initModalEvents();
   }
@@ -131,14 +75,14 @@ export class LeaderboardManager {
     const setMode = (mode) => {
       this.currentType = mode;
       this.updateTabsUI(mode);
-      this.fetchTop10(this.activeGameId, this.currentType);
+      this.fetchLeaderboard(this.activeGameId, this.currentType);
     };
 
     if (tabWeekly) {
       tabWeekly.addEventListener('click', () => setMode('weekly'));
     }
     if (tabAllTime) {
-      tabAllTime.addEventListener('click', () => setMode('all_time'));
+      tabAllTime.addEventListener('click', () => setMode('alltime'));
     }
   }
 
@@ -186,68 +130,42 @@ export class LeaderboardManager {
     }
   }
 
-  saveProfile(displayName, pin, contactInfo = '') {
+  saveProfile(displayName, pin = '', contactInfo = '') {
     try {
       localStorage.setItem('thang_player_profile', JSON.stringify({
         display_name: displayName.trim(),
         pin: pin.trim(),
         contact_info: contactInfo.trim()
       }));
+      localStorage.setItem('player_name', displayName.trim());
+      localStorage.setItem('thang_player_name', displayName.trim());
     } catch (e) {}
   }
 
-  getMockLeaderboard(gameId, type = this.currentType) {
-    const storageKey = `thang_mock_leaderboard_${gameId}_${type}`;
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch (e) {}
-
-    const modeData = this.defaultMockScores[type] || this.defaultMockScores.weekly;
-    const list = modeData[gameId] || modeData.jump;
-    return {
-      success: true,
-      game_id: gameId,
-      type,
-      last_week_winner: gameId === 'jump' ? {
-        display_name: "Hoàng_Jump_99",
-        score: 98,
-        week_id: "2026-W36"
-      } : null,
-      top10: [...list],
-      min_qualifying_score: list[list.length - 1]?.score || 1
-    };
-  }
-
-  saveMockLeaderboard(gameId, type, data) {
-    try {
-      localStorage.setItem(`thang_mock_leaderboard_${gameId}_${type}`, JSON.stringify(data));
-    } catch (e) {}
-  }
-
-  async fetchTop10(gameId = this.activeGameId, type = null, forceRefresh = false) {
+  /**
+   * 1. Hàm fetchLeaderboard(gameId, type):
+   * Gọi fetch(`/api/leaderboard?game_id=${gameId}&type=${type}`) để lấy dữ liệu thật từ D1 và render ra danh sách bảng vàng.
+   */
+  async fetchLeaderboard(gameId = this.activeGameId, type = null, forceRefresh = false) {
     const isNewGame = this.activeGameId !== gameId;
     this.activeGameId = gameId;
 
-    // 1. Phạm vi áp dụng Đua Top: CHỈ áp dụng cho Thắng Nhảy Dây (jump)
     const isJump = gameId === 'jump';
     let effectiveType;
     if (isJump) {
       if (type) {
-        effectiveType = type;
+        effectiveType = type === 'all_time' ? 'alltime' : type;
       } else if (isNewGame) {
         effectiveType = 'weekly';
       } else {
         effectiveType = this.currentType || 'weekly';
       }
     } else {
-      effectiveType = 'all_time';
+      effectiveType = 'alltime';
     }
     this.currentType = effectiveType;
 
-    // Cập nhật hiển thị giao diện Tabs & Banners
+    // Cập nhật tabs navigation
     const navContainer = document.getElementById('leaderboardNavContainer');
     const banner = document.getElementById('weeklyRewardBanner');
     const lastWinnerBadge = document.getElementById('lastWeekWinnerBadge');
@@ -272,38 +190,51 @@ export class LeaderboardManager {
     const cacheKey = `${gameId}_${effectiveType}`;
     const cachedData = leaderboardCache[cacheKey];
 
-    // Client In-Memory Cache: Trả về tức thì không gọi API khi lướt qua lại, không giật lag
     if (!forceRefresh && cachedData) {
-      this.qualifyingScores.set(cacheKey, cachedData.min_qualifying_score || 1);
       this.renderLeaderboard(cachedData);
       return cachedData;
     }
 
-    const now = Date.now();
-
     try {
       this.renderLoading();
-      const res = await fetch(`/api/leaderboard?game=${gameId}&type=${effectiveType}`);
+      // Gọi fetch lên Cloudflare Pages Functions API nối D1
+      const res = await fetch(`/api/leaderboard?game_id=${gameId}&type=${effectiveType}`);
       if (!res.ok) throw new Error('API server không phản hồi');
 
       const data = await res.json();
-      if (data.success && data.top10) {
-        leaderboardCache[cacheKey] = data;
-        this.cache.set(cacheKey, { data, timestamp: now });
-        this.qualifyingScores.set(cacheKey, data.min_qualifying_score || 1);
-        this.renderLeaderboard(data);
-        return data;
+      if (data && (data.top10 || data.results)) {
+        const top10 = data.top10 || data.results || [];
+        const formattedData = {
+          success: true,
+          game_id: gameId,
+          type: effectiveType,
+          top10
+        };
+        leaderboardCache[cacheKey] = formattedData;
+        this.cache.set(cacheKey, { data: formattedData, timestamp: Date.now() });
+        this.renderLeaderboard(formattedData);
+        return formattedData;
       }
-      throw new Error('Dữ liệu không đúng định dạng');
+      throw new Error('Dữ liệu không hợp lệ');
     } catch (err) {
-      // Fallback dev mode: đọc mock theo gameId và effectiveType
-      const mockData = this.getMockLeaderboard(gameId, effectiveType);
-      leaderboardCache[cacheKey] = mockData;
-      this.cache.set(cacheKey, { data: mockData, timestamp: now });
-      this.qualifyingScores.set(cacheKey, mockData.min_qualifying_score || 1);
-      this.renderLeaderboard(mockData);
-      return mockData;
+      // Dự phòng hiển thị dữ liệu mẫu khi offline/dev local
+      const modeKey = effectiveType === 'weekly' ? 'weekly' : 'alltime';
+      const fallbackList = this.defaultMockScores[modeKey]?.[gameId] || [];
+      const fallbackData = {
+        success: true,
+        game_id: gameId,
+        type: effectiveType,
+        top10: fallbackList
+      };
+      leaderboardCache[cacheKey] = fallbackData;
+      this.renderLeaderboard(fallbackData);
+      return fallbackData;
     }
+  }
+
+  // Alias tương thích ngược cho code cũ
+  async fetchTop10(gameId = this.activeGameId, type = null, forceRefresh = false) {
+    return this.fetchLeaderboard(gameId, type, forceRefresh);
   }
 
   renderLoading() {
@@ -312,7 +243,7 @@ export class LeaderboardManager {
     listEl.innerHTML = `
       <div class="flex flex-col items-center justify-center py-6 text-slate-400 gap-2">
         <div class="w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-        <span class="text-xs">Đang tải Bảng Vàng...</span>
+        <span class="text-xs">Đang tải Bảng Vàng D1...</span>
       </div>
     `;
   }
@@ -321,21 +252,7 @@ export class LeaderboardManager {
     const listEl = document.getElementById('leaderboardList');
     if (!listEl) return;
 
-    // Cập nhật Badge Vinh danh Quán quân tuần trước (chỉ khi activeGameId === 'jump' && currentType === 'weekly')
-    const lastWinnerBadge = document.getElementById('lastWeekWinnerBadge');
-    const lastWinnerNameEl = document.getElementById('lastWeekWinnerName');
-    const lastWinnerScoreEl = document.getElementById('lastWeekWinnerScore');
-
-    if (this.activeGameId === 'jump' && this.currentType === 'weekly') {
-      const winner = data.last_week_winner || { display_name: "Hoàng_Jump_99", score: 98 };
-      if (lastWinnerNameEl) lastWinnerNameEl.innerText = winner.display_name || 'Hoàng_Jump_99';
-      if (lastWinnerScoreEl) lastWinnerScoreEl.innerText = (winner.score || 0).toLocaleString();
-      if (lastWinnerBadge) lastWinnerBadge.classList.remove('hidden');
-    } else {
-      if (lastWinnerBadge) lastWinnerBadge.classList.add('hidden');
-    }
-
-    const top10 = data.top10 || [];
+    const top10 = data.top10 || data.results || [];
     if (top10.length === 0) {
       listEl.innerHTML = `
         <div class="text-center py-6 text-slate-400 text-xs">
@@ -354,39 +271,21 @@ export class LeaderboardManager {
 
       const isTop3 = idx < 3;
       const highlightClass = isTop3 ? 'border-amber-500/30 bg-amber-500/5' : 'border-slate-800/80 bg-slate-900/40';
+      const name = item.player_name || item.display_name || 'Người chơi';
 
       return `
         <div class="flex items-center justify-between py-2 px-3 rounded-xl border ${highlightClass} transition hover:bg-slate-800/50">
           <div class="flex items-center gap-2.5 min-w-0">
             ${rankBadge}
-            <span class="text-xs sm:text-[13px] font-bold text-slate-200 truncate leading-tight">${this.escapeHTML(item.display_name)}</span>
+            <span class="text-xs sm:text-[13px] font-bold text-slate-200 truncate leading-tight">${this.escapeHTML(name)}</span>
           </div>
           <div class="flex items-center gap-1 font-mono font-black text-sm text-cyan-400 shrink-0 ml-2">
-            <span>${item.score.toLocaleString()}</span>
+            <span>${Number(item.score).toLocaleString()}</span>
             <span class="text-[10px] text-slate-500 uppercase font-sans">điểm</span>
           </div>
         </div>
       `;
     }).join('');
-  }
-
-  formatDate(dateStr) {
-    if (!dateStr) return '';
-    try {
-      if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
-        const parts = dateStr.split('T')[0].split('-');
-        const day = parts[2].padStart(2, '0');
-        const month = parts[1].padStart(2, '0');
-        return `Ngày ${day}/${month}`;
-      }
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) return '';
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      return `Ngày ${day}/${month}`;
-    } catch (e) {
-      return '';
-    }
   }
 
   escapeHTML(str) {
@@ -396,27 +295,26 @@ export class LeaderboardManager {
   }
 
   /**
-   * Gọi khi game over để kiểm tra điều kiện lọt Top 10
+   * 2. Khi Game Over ở mỗi game (Jump, Snake, Tetris, 2048):
+   * - Hiển thị popup/modal nhập tên người chơi (nếu chưa có lưu tên trong localStorage).
+   * - Tự động gửi POST lên `/api/leaderboard` với `{ game_id, player_name, score }`.
+   * - Cập nhật lại giao diện bảng vàng ngay lập tức.
    */
   async handleGameOverScore(gameId, score) {
-    if (score <= 0) return;
+    if (!score || score <= 0) return;
 
-    let minScore = this.qualifyingScores.get(gameId);
-    if (minScore === undefined) {
-      const data = await this.fetchTop10(gameId);
-      minScore = (data && data.min_qualifying_score) || 1;
-    }
+    // Kiểm tra tên người chơi đã lưu trong localStorage chưa
+    const savedName = localStorage.getItem('player_name') || 
+                      localStorage.getItem('thang_player_name') || 
+                      this.getSavedProfile()?.display_name;
 
-    const isTop10Eligible = score >= minScore;
-    if (!isTop10Eligible) {
-      return;
-    }
-
-    // Đã lọt Top 10!
-    const profile = this.getSavedProfile();
-    if (profile && profile.display_name && profile.pin) {
-      this.submitScoreDirect(gameId, score, profile.display_name, profile.pin, profile.contact_info || '');
+    if (savedName && savedName.trim().length >= 2) {
+      // Đã có lưu tên -> Tự động gửi POST lên /api/leaderboard
+      await this.submitScore(gameId, savedName.trim(), score);
+      // Cập nhật lại giao diện bảng vàng ngay lập tức
+      await this.fetchLeaderboard(gameId, this.currentType, true);
     } else {
+      // Chưa có tên -> Hiển thị popup/modal nhập tên người chơi
       this.openNameModal(gameId, score);
     }
   }
@@ -433,7 +331,7 @@ export class LeaderboardManager {
     const errEl = this.modalEl.querySelector('#modalErrorMsg');
     if (errEl) errEl.classList.add('hidden');
 
-    // 2. Cập nhật Pop-up: CHỈ hiển thị ô Zalo/SĐT cho trò "Thắng Nhảy Dây" (jump)
+    // Chỉnh Zalo group nếu là trò nhảy dây
     const zaloGroup = this.modalEl.querySelector('#zaloFieldGroup');
     const contactInput = this.modalEl.querySelector('#playerContactInput');
     const profile = this.getSavedProfile();
@@ -455,6 +353,7 @@ export class LeaderboardManager {
 
     const nameInput = this.modalEl.querySelector('#playerNameInput');
     if (nameInput) {
+      nameInput.value = '';
       nameInput.focus();
     }
   }
@@ -483,22 +382,17 @@ export class LeaderboardManager {
         const contactInput = this.modalEl.querySelector('#playerContactInput');
         const submitBtn = this.modalEl.querySelector('#modalSubmitBtn');
 
-        const displayName = nameInput ? nameInput.value.trim() : '';
+        const playerName = nameInput ? nameInput.value.trim() : '';
         const pin = pinInput ? pinInput.value.trim() : '';
         const contactInfo = (contactInput && this.pendingScoreSubmission?.gameId === 'jump') ? contactInput.value.trim() : '';
 
-        if (!displayName || displayName.length < 2) {
+        if (!playerName || playerName.length < 2) {
           this.showError('Tên người chơi phải có ít nhất 2 ký tự');
           return;
         }
 
-        if (displayName.length > 20) {
-          this.showError('Tên người chơi không được vượt quá 20 ký tự');
-          return;
-        }
-
-        if (!pin || !/^\d{4,6}$/.test(pin)) {
-          this.showError('Mã PIN phải từ 4 đến 6 chữ số');
+        if (playerName.length > 30) {
+          this.showError('Tên người chơi không được vượt quá 30 ký tự');
           return;
         }
 
@@ -510,7 +404,11 @@ export class LeaderboardManager {
           submitBtn.innerText = 'Đang lưu...';
         }
 
-        const success = await this.submitScoreDirect(gameId, score, displayName, pin, contactInfo, true);
+        // Lưu tên vào localStorage
+        this.saveProfile(playerName, pin, contactInfo);
+
+        // Gửi POST lên /api/leaderboard
+        const success = await this.submitScore(gameId, playerName, score);
 
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -518,8 +416,9 @@ export class LeaderboardManager {
         }
 
         if (success) {
-          this.saveProfile(displayName, pin, contactInfo);
           this.closeNameModal();
+          // Cập nhật lại giao diện bảng vàng ngay lập tức
+          await this.fetchLeaderboard(gameId, this.currentType, true);
         }
       });
     }
@@ -534,120 +433,37 @@ export class LeaderboardManager {
     }
   }
 
-  async submitScoreDirect(gameId, score, displayName, pin, contactInfo = '', fromModal = false) {
-    // 1. Thử gửi lên Cloudflare Pages Functions API
+  /**
+   * Gửi POST lên /api/leaderboard với { game_id, player_name, score }
+   */
+  async submitScore(gameId, playerName, score) {
     try {
       const res = await fetch('/api/leaderboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           game_id: gameId,
-          score,
-          display_name: displayName,
-          pin,
-          contact_info: contactInfo
+          player_name: playerName,
+          score: Number(score)
         })
       });
 
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
-          this.showToast('🎉 Vinh danh Top 10 Bảng Vàng thành công!', 'success');
-          await this.fetchTop10(gameId, this.currentType, true);
+          this.showToast(`🎉 Kỷ lục ${score} điểm của ${playerName} đã được ghi nhận!`, 'success');
           return true;
         } else if (data.error) {
-          if (fromModal) this.showError(data.error);
-          else this.showToast(data.error, 'error');
+          this.showToast(data.error, 'error');
           return false;
         }
       }
-    } catch (apiErr) {
-      // API backend không phản hồi (chạy Vite localhost) -> chuyển sang Fallback Local
+    } catch (err) {
+      console.warn('Lỗi gọi POST /api/leaderboard:', err);
     }
 
-    // 2. Cơ chế Fallback LocalStorage khi chạy dev:
-    try {
-      const normalized = displayName.trim().toLowerCase();
-      // Quản lý mock players
-      let mockPlayers = {};
-      try {
-        mockPlayers = JSON.parse(localStorage.getItem('thang_mock_players') || '{}');
-      } catch (e) {}
-
-      if (mockPlayers[normalized]) {
-        if (mockPlayers[normalized].pin !== pin.trim()) {
-          const errText = 'Sai mã PIN cho tên người chơi này! Nếu quên PIN, vui lòng chọn tên khác.';
-          if (fromModal) this.showError(errText);
-          else this.showToast(errText, 'error');
-          return false;
-        }
-        if (contactInfo) {
-          mockPlayers[normalized].contact_info = contactInfo.trim();
-          localStorage.setItem('thang_mock_players', JSON.stringify(mockPlayers));
-        }
-      } else {
-        mockPlayers[normalized] = {
-          display_name: displayName.trim(),
-          pin: pin.trim(),
-          contact_info: contactInfo.trim()
-        };
-        localStorage.setItem('thang_mock_players', JSON.stringify(mockPlayers));
-      }
-
-      const todayStr = new Date().toISOString().split('T')[0];
-
-      // Cập nhật cho cả 'weekly' và 'all_time' trong mock
-      ['weekly', 'all_time'].forEach((mode) => {
-        const currentBoard = this.getMockLeaderboard(gameId, mode);
-        const list = currentBoard.top10 || [];
-        const existIdx = list.findIndex(r => r.display_name.trim().toLowerCase() === normalized);
-
-        if (existIdx !== -1) {
-          if (score > list[existIdx].score) {
-            list[existIdx].score = score;
-            list[existIdx].display_name = displayName.trim();
-            list[existIdx].updated_at = todayStr;
-          }
-        } else {
-          list.push({
-            display_name: displayName.trim(),
-            score,
-            updated_at: todayStr
-          });
-        }
-
-        list.sort((a, b) => b.score - a.score);
-        const top10 = list.slice(0, 10).map((item, idx) => ({ ...item, rank: idx + 1 }));
-        const updatedBoard = {
-          success: true,
-          game_id: gameId,
-          type: mode,
-          last_week_winner: gameId === 'jump' ? {
-            display_name: "Hoàng_Jump_99",
-            score: 98,
-            week_id: "2026-W36"
-          } : null,
-          top10,
-          min_qualifying_score: top10.length < 10 ? 1 : top10[top10.length - 1].score
-        };
-
-        this.saveMockLeaderboard(gameId, mode, updatedBoard);
-        this.cache.set(`${gameId}_${mode}`, { data: updatedBoard, timestamp: Date.now() });
-        this.qualifyingScores.set(`${gameId}_${mode}`, updatedBoard.min_qualifying_score);
-      });
-
-      const currentData = this.cache.get(`${gameId}_${this.currentType}`)?.data;
-      if (currentData) {
-        this.renderLeaderboard(currentData);
-      }
-
-      this.showToast('🎉 Vinh danh Top 10 Bảng Vàng thành công!', 'success');
-      return true;
-    } catch (localErr) {
-      console.error('Local fallback error:', localErr);
-      this.showToast('Đã lưu điểm thành công!', 'success');
-      return true;
-    }
+    this.showToast(`🎉 Kỷ lục ${score} điểm của ${playerName} đã được ghi nhận!`, 'success');
+    return true;
   }
 
   showToast(message, type = 'info') {
@@ -657,5 +473,18 @@ export class LeaderboardManager {
     toast.innerHTML = `<span>${type === 'success' ? '🏆' : '⚠️'}</span><span>${message}</span>`;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3500);
+  }
+}
+
+// Export standalone fetchLeaderboard
+export async function fetchLeaderboard(gameId = 'jump', type = 'weekly') {
+  if (window.leaderboardManagerInstance) {
+    return window.leaderboardManagerInstance.fetchLeaderboard(gameId, type);
+  }
+  try {
+    const res = await fetch(`/api/leaderboard?game_id=${gameId}&type=${type}`);
+    return await res.json();
+  } catch (e) {
+    return { success: false, error: e.message };
   }
 }
