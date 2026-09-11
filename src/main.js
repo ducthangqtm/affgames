@@ -246,7 +246,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6. Xử lý Cụm tiện ích: Nút Chia sẻ (Share Button)
+  // 6. Xử lý Cụm tiện ích: Nút Logo TiT (Về đầu trang) & Nút Chia sẻ (Share Button)
+  const titLogoBtn = document.getElementById('titLogoBtn');
+  if (titLogoBtn) {
+    titLogoBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+
   const shareBtn = document.getElementById('shareBtn');
   if (shareBtn) {
     const shareUrl = 'https://thangnhayday.com';
