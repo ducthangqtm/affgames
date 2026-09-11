@@ -22,3 +22,15 @@ CREATE TABLE IF NOT EXISTS game_scores (
 CREATE INDEX IF NOT EXISTS idx_game_scores_game ON game_scores(game_id, score DESC);
 CREATE INDEX IF NOT EXISTS idx_game_scores_week ON game_scores(game_id, week_id, score DESC);
 CREATE INDEX IF NOT EXISTS idx_players_normalized ON players(normalized_name);
+
+-- Bảng leaderboards đơn giản hóa cho mini-games
+CREATE TABLE IF NOT EXISTS leaderboards (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  game_id TEXT NOT NULL,
+  player_name TEXT NOT NULL,
+  score INTEGER NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_leaderboards_game_score ON leaderboards(game_id, score DESC);
+CREATE INDEX IF NOT EXISTS idx_leaderboards_game_created ON leaderboards(game_id, created_at DESC);

@@ -1,0 +1,8 @@
+name = "affgames"
+compatibility_date = "2026-09-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "affgames-db"
+database_id = "922ed81b-b314-45fc-9400-cf496f31710e"
