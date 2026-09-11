@@ -129,11 +129,6 @@
             alt="Thắng Nhảy Dây"
           />
         </div>
-        <div class="avatar-badge" title="Xác minh chính chủ">
-          <svg viewBox="0 0 24 24">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-          </svg>
-        </div>
       </div>
 
       <!-- Tên & Username -->
@@ -167,9 +162,15 @@
           <svg class="w-5 h-5 fill-[#229ED9]" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.941z"/></svg>
         </a>
         <!-- 5. Nút Donate Mời Cà Phê -->
-        <button id="donateBtn" class="relative h-11 rounded-xl bg-[#1a1e29] hover:bg-[#222736] border border-[#F5A623]/50 flex items-center justify-center transition hover:scale-105 active:scale-95 shadow-sm shadow-amber-500/10 cursor-pointer" title="Mời cà phê / Donate ủng hộ">
-          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FFB020] ring-2 ring-[#060913] animate-pulse"></span>
-          <svg class="w-5 h-5 fill-[#FFB020]" viewBox="0 0 24 24"><path d="M2 19h18v2H2v-2zm2-17h13a2 2 0 0 1 2 2v2h1a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-1v1a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V2zm13 4V4H4v11a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V6zm2 2v4h1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-1zM6 1h2v2H6V1zm4-1h2v3h-2V0zm4 1h2v2h-2V1z"/></svg>
+        <button id="donateBtn" class="relative h-11 rounded-xl bg-[#1a1e29] hover:bg-[#222736] border border-amber-500/60 flex items-center justify-center transition hover:scale-105 active:scale-95 shadow-sm shadow-amber-500/20 cursor-pointer text-amber-400" title="Mời cà phê / Donate ủng hộ">
+          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-[#0b0f19] animate-pulse"></span>
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
+          </svg>
         </button>
       </div>
       <!-- Main Navigation 2 Tabs -->
@@ -306,8 +307,6 @@
         <a href="/admin.html" class="text-slate-400 hover:text-cyan-400 transition flex items-center gap-1">
           <span>⚙️</span><span>Quản trị Sản phẩm</span>
         </a>
-        <span>•</span>
-        <a href="#donateModal" id="footerDonateLink" class="text-amber-400 hover:underline">Ủng hộ cà phê</a>
       </div>
     </footer>
   </div>
