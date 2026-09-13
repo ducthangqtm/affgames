@@ -95,6 +95,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Tải Bảng Vàng ban đầu (game jump)
   leaderboardManager.fetchTop10('jump');
 
+  // 3. Logic URL Hash: Tự động kích hoạt chuyển sang tab "Trò chơi (Arcade)" khi URL có #arcade hoặc #games
+  const handleUrlHash = () => {
+    const hash = (window.location.hash || '').toLowerCase();
+    if (hash === '#arcade' || hash === '#games') {
+      switchMainTab('arcade');
+    } else if (hash === '#products' || hash === '#shop') {
+      switchMainTab('products');
+    }
+  };
+
+  handleUrlHash();
+  window.addEventListener('hashchange', handleUrlHash);
+
+
   // Lấy tổng lượt chơi ban đầu từ D1 (/api/stats) kèm timestamp và no-store chống cache
   fetch(`/api/stats?t=${Date.now()}`, { cache: 'no-store' })
     .then(res => {

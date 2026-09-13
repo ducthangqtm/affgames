@@ -475,6 +475,26 @@
     </div>
   </div>
 
+    <!-- Logic URL Hash: Tự động kích hoạt chuyển sang tab "Trò chơi (Arcade)" khi URL có #arcade hoặc #games -->
+  <script>
+    (function () {
+      function checkArcadeHash() {
+        var hash = (window.location.hash || '').toLowerCase();
+        if (hash === '#arcade' || hash === '#games') {
+          var tabArcade = document.getElementById('mainTabArcade');
+          if (tabArcade) {
+            tabArcade.click();
+          }
+        }
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkArcadeHash);
+      } else {
+        checkArcadeHash();
+      }
+      window.addEventListener('hashchange', checkArcadeHash);
+    })();
+  </script>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
